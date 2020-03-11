@@ -64,7 +64,7 @@ input:focus {
     width: 100%;
   }
   .container {
-    padding-top: 10em;
+    padding-top: 5em;
     padding-bottom: 0;
     width: 90%;
   }
