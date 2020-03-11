@@ -6,23 +6,28 @@
         <div class="container-title">
           <h1 class="md-title md-headline">IBM AR Business Card</h1>
           <h2>Welcome back! Please login to your account.</h2>
+          <p class="error-message">{{errorMsg}}</p>
         </div>
         <form class="container-inputfield">
           <md-field>
-            <label>UserName</label>
-            <md-input></md-input>
+            <label>Email</label>
+            <md-input v-model="loginEmail"></md-input>
           </md-field>
           <md-field>
             <label>Password</label>
-            <md-input></md-input>
+            <md-input v-model="loginPassword" type="password"></md-input>
           </md-field>
         </form>
         <div class="loginstate">
           <md-checkbox>Remember me</md-checkbox>
-          <md-button class="loginstate-forgot" :md-ripple="false">Forgot Password</md-button>
+          <md-button
+            v-on:click="toForgot()"
+            class="loginstate-forgot"
+            :md-ripple="false"
+          >Forgot Password</md-button>
         </div>
         <div class="container-buttons">
-          <a href class="buttons-login">Login</a>
+          <a v-on:click="onLogin()" class="buttons-login">Login</a>
           <a v-on:click="toRegister()" class="buttons-signup">Sign up</a>
         </div>
       </div>
@@ -31,6 +36,7 @@
           <div class="container-title">
             <h1 class="md-title md-headline">IBM AR Business Card</h1>
             <h2>Please complete to create your account.</h2>
+            <p class="error-message">{{errorMsg}}</p>
           </div>
           <form class="container-inputfield">
             <md-field>
@@ -59,8 +65,22 @@
             </md-field>
           </form>
           <md-checkbox>I agree with terms and conditions</md-checkbox>
-          <a class="container-buttons-skip">Skip</a>
+          <a class="container-buttons-skip">Sign up</a>
           <a v-on:click="toLogin()" class="buttons-Already">Already have an account? Sign in.</a>
+        </div>
+      </div>
+      <div v-if="state == 'forgot'" class="container">
+        <div class="container-title">
+          <h1 class="md-title md-headline">IBM AR Business Card</h1>
+          <h2>Enter your email and we send you a password reset link.</h2>
+          <p class="error-message">{{errorMsg}}</p>
+        </div>
+        <md-field>
+          <label>Email</label>
+          <md-input></md-input>
+        </md-field>
+        <div class="container-buttons">
+          <a v-on:click="sendRequest()" class="buttons-login">Send request</a>
         </div>
       </div>
     </div>
@@ -76,11 +96,38 @@ export default {
     },
     toLogin() {
       this.state = "login";
+    },
+    toForgot() {
+      this.state = "forgot";
+    },
+    sendRequest() {
+      console.log("send request");
+    },
+    async onLogin() {
+      try {
+        let data = (
+          await this.$http.post(this.$globalConfig.baseUrl + "/user/login", {
+            email: this.loginEmail,
+            password: this.loginPassword
+          })
+        ).data;
+        this.errorMsg = "";
+        this.$globalData.userData._id = data._id;
+        this.$globalData.userData.token = data.token;
+        console.log(this.$globalData.userData);
+        this.$router.push("MyCards");
+      } catch (error) {
+        console.log(error);
+        this.errorMsg = error.response.data.error;
+      }
     }
   },
   data: function() {
     return {
-      state: "login"
+      state: "login",
+      errorMsg: "",
+      loginEmail: "1010482029@qq.com",
+      loginPassword: "66871068"
     };
   }
 };
@@ -123,13 +170,6 @@ form {
 label {
   /* font-size: 0.5rem; */
   user-select: none;
-}
-
-input {
-  font-size: 1.5rem;
-  border: none;
-  border-bottom: 1px solid grey;
-  margin-bottom: 1em;
 }
 
 md-button {
@@ -181,6 +221,13 @@ div {
   flex-direction: column;
 }
 
+.error-message {
+  color: deeppink;
+  font-size: 1rem;
+  text-align: center;
+  display: block;
+}
+
 /* for login */
 
 .loginstate {
@@ -194,7 +241,6 @@ div {
   margin-top: 3em;
 }
 .loginstate-forgot {
-  /* font-family: Roboto, Noto Sans, -apple-system, BlinkMacSystemFont, sans-serif !important; */
   font-weight: 400;
   font-size: 0.8rem;
   letter-spacing: 0.01em;
@@ -211,6 +257,7 @@ div {
   user-select: none;
   color: white !important;
   background-color: #43425d;
+  margin: 0 auto;
 }
 
 .buttons-signup {
