@@ -64,7 +64,12 @@ input:focus {
     width: 100%;
   }
   .container {
+    padding-top: 10em;
+    padding-bottom: 0;
     width: 90%;
+  }
+  .right {
+    align-items: flex-start;
   }
 }
 

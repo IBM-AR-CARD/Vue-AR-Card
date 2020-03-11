@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "gh-pages": "yarn build && git subtree push --prefix dist origin gh-pages"
+    "deploy": "yarn build && git add dist && git commit -m \"Initial dist subtree commit\"",
+    "gh-pages": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "core-js": "^3.6.4",
