@@ -115,6 +115,14 @@ export default {
         this.$globalData.userData._id = data._id;
         this.$globalData.userData.token = data.token;
         console.log(this.$globalData.userData);
+        let profile = (
+          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get", {
+            _id: this.$globalData.userData._id
+          })
+        ).data;
+        Object.assign(this.$globalData.userData, profile);
+        console.log(this.$globalData.userData);
+
         this.$router.push("MyCards");
       } catch (error) {
         console.log(error);

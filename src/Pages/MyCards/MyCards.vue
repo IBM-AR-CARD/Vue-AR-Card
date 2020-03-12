@@ -4,10 +4,11 @@
       <md-button class="md-icon-button" @click="showNavigation = true">
         <md-icon>menu</md-icon>
       </md-button>
-      <span class="md-title">My Title</span>
+      <span class="md-title">IBM AR BUSINESS CARD</span>
 
       <div class="md-toolbar-section-end">
-        <md-button @click="showSidepanel = true">Favorites</md-button>
+        <span class="toolbar-toprght-name">{{firstName }} {{lastName}}</span>
+        <img class="toolbar-toprght-icon" v-bind:src="profile" />
       </div>
     </md-toolbar>
 
@@ -18,55 +19,18 @@
 
       <md-list>
         <md-list-item>
-          <md-icon>move_to_inbox</md-icon>
-          <span class="md-list-item-text">Inbox</span>
+          <md-icon>person</md-icon>
+          <span class="md-list-item-text">Profile</span>
         </md-list-item>
 
         <md-list-item>
-          <md-icon>send</md-icon>
-          <span class="md-list-item-text">Sent Mail</span>
+          <md-icon>history</md-icon>
+          <span class="md-list-item-text">Scan history</span>
         </md-list-item>
 
         <md-list-item>
-          <md-icon>delete</md-icon>
-          <span class="md-list-item-text">Trash</span>
-        </md-list-item>
-
-        <md-list-item>
-          <md-icon>error</md-icon>
-          <span class="md-list-item-text">Spam</span>
-        </md-list-item>
-      </md-list>
-    </md-drawer>
-
-    <md-drawer class="md-right" :md-active.sync="showSidepanel">
-      <md-toolbar class="md-transparent" md-elevation="0">
-        <span class="md-title">Favorites</span>
-      </md-toolbar>
-
-      <md-list>
-        <md-list-item>
-          <span class="md-list-item-text">Abbey Christansen</span>
-
-          <md-button class="md-icon-button md-list-action">
-            <md-icon class="md-primary">chat_bubble</md-icon>
-          </md-button>
-        </md-list-item>
-
-        <md-list-item>
-          <span class="md-list-item-text">Alex Nelson</span>
-
-          <md-button class="md-icon-button md-list-action">
-            <md-icon class="md-primary">chat_bubble</md-icon>
-          </md-button>
-        </md-list-item>
-
-        <md-list-item>
-          <span class="md-list-item-text">Mary Johnson</span>
-
-          <md-button class="md-icon-button md-list-action">
-            <md-icon>chat_bubble</md-icon>
-          </md-button>
+          <md-icon>star_outline</md-icon>
+          <span class="md-list-item-text">Favourite</span>
         </md-list-item>
       </md-list>
     </md-drawer>
@@ -80,14 +44,31 @@ export default {
   name: "MyCards",
   data: () => ({
     showNavigation: false,
-    showSidepanel: false
-  })
+    showSidepanel: false,
+    profile: "",
+    state: "",
+    firstname: "",
+    lastname: "",
+    description: "",
+    experience: "",
+    education: "",
+    gender: 0
+  }),
+  created: function() {
+    let userData = this.$globalData.userData;
+    this.profile = userData.profile;
+    this.firstName = userData.firstname;
+    this.lastName = userData.lastname;
+    this.description = userData.description;
+    this.experience = userData.experience;
+    this.education = userData.experience;
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .page-container {
-  min-height: 300px;
+  height: 100%;
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(#000, 0.12);
@@ -101,5 +82,15 @@ export default {
 
 .md-content {
   padding: 16px;
+}
+.toolbar-toprght-icon {
+  width: 50px;
+  height: 50px;
+  clip-path: circle(25px at center);
+}
+.toolbar-toprght-name {
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  margin-right: 1em;
 }
 </style>

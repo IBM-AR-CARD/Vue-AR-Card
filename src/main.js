@@ -5,6 +5,7 @@ import router from "./router/router";
 import VueMaterial from "vue-material";
 import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
+import "./theme.scss";
 import axios from "axios";
 Vue.prototype.$http = axios;
 Vue.use(VueRouter);
