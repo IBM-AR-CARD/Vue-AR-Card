@@ -2,7 +2,7 @@
   <div class="page-container">
     <md-app md-waterfall md-mode="fixed">
       <md-app-toolbar class="md-primary">
-        <md-button class="md-icon-button" @click="showNavigation = true">
+        <md-button class="md-icon-button nav-left-menu-button" @click="showNavigation = true">
           <md-icon>menu</md-icon>
         </md-button>
         <span class="md-title">IBM AR BUSINESS CARD</span>
@@ -13,7 +13,7 @@
         </div>
       </md-app-toolbar>
 
-      <md-app-drawer :md-active.sync="showNavigation" md-swipeable>
+      <md-app-drawer :md-active.sync="showNavigation" md-swipeable md-permanent="full">
         <md-toolbar class="md-transparent" md-elevation="0">
           <span class="md-title nav-title">Menu</span>
         </md-toolbar>
@@ -84,14 +84,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .page-container {
-//   // height: 100%;
-//   overflow: hidden;
-//   // position: relative;
-//   // border: 1px solid rgba(#000, 0.12);
-// }
-
-// Demo purposes only
+.page-container {
+  height: 100%;
+  overflow: hidden;
+  // position: relative;
+  // border: 1px solid rgba(#000, 0.12);
+}
+.md-app {
+  // height: 100% !important;
+  height: 100%;
+}
 .md-drawer {
   width: 230px;
   max-width: calc(100vw - 125px);
@@ -140,38 +142,65 @@ export default {
   font-weight: bold;
 }
 .card-container {
+  // box-sizing: border-box;
   width: 100%;
-  height: 100%;
-  display: inline-flex;
+  height: auto;
+  display: flex;
   flex-wrap: wrap;
   padding: 2em;
-  justify-content: flex-start;
+  // justify-content: ;
   overflow: auto;
 }
 .md-content {
   background-color: white !important;
 }
 .card {
-  width: 32%;
+  // box-sizing: border-box;
+  // height: 300px;
+  width: 29%;
   margin-bottom: 2em;
-  max-width: 620px !important;
+  margin: 1em 0;
+  max-width: 640px !important;
+  min-width: 300px;
+  // max-height: 230px !important;
 }
-
-@media screen and (min-width: 821px) {
+.nav-left-menu-button {
+  display: none;
+}
+@media screen and (max-width: 819px) {
   .card {
-    width: 30%;
+    width: 43%;
     // max-width: 600px;
+    margin-bottom: 1em;
+  }
+  .md-drawer {
+    width: 60px !important;
+  }
+  .nav-left-menu-button {
+    display: none !important;
+  }
+  .nav-list-item-text {
+    display: none !important;
+  }
+  .nav-title {
+    display: none !important;
   }
 }
-@media screen and (max-width: 820px) {
+@media screen and (max-width: 620px) {
   .card {
-    width: 47%;
-    // max-width: 600px;
+    width: 95%;
   }
-}
-@media screen and (max-width: 720px) {
-  .card {
-    width: 100%;
+  .nav-left-menu-button {
+    display: block !important;
+  }
+  .md-drawer {
+    width: 220px !important;
+  }
+  .nav-list-item-text {
+    display: block !important;
+  }
+  .nav-title {
+    display: block !important;
   }
 }
 </style>
