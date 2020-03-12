@@ -15,16 +15,24 @@
 
       <md-app-drawer :md-active.sync="showNavigation" md-swipeable md-permanent="full">
         <md-toolbar class="md-transparent" md-elevation="0">
-          <span class="md-title nav-title">Menu</span>
+          <span class="md-title nav-title">{{state | capitalize}}</span>
         </md-toolbar>
 
         <md-list class="nav-list">
-          <md-list-item class="nav-list-item nav-list-item-onselect">
+          <md-list-item
+            v-on:click="toProfile()"
+            v-bind:class="{ 'nav-list-item-onselect': state=='profile' }"
+            class="nav-list-item"
+          >
             <md-icon color="white" class="nav-list-icon">person</md-icon>
             <span class="md-list-item-text nav-list-item-text">Profile</span>
           </md-list-item>
 
-          <md-list-item class="nav-list-item">
+          <md-list-item
+            v-on:click="toHistory()"
+            v-bind:class="{ 'nav-list-item-onselect': state=='history' }"
+            class="nav-list-item"
+          >
             <md-icon color="white" class="nav-list-icon">history</md-icon>
             <span class="md-list-item-text nav-list-item-text">Scan history</span>
           </md-list-item>
@@ -36,19 +44,35 @@
         </md-list>
       </md-app-drawer>
       <!-- <div class="card-container"> -->
-      <md-app-content class="md-scrollbar card-container">
-        <md-card class="card" v-for="index in [1,2,3,4,5]" v-bind:key="index">
-          <md-card-header>
-            <div class="md-title">Card without hover effect</div>
-          </md-card-header>
+      <md-app-content
+        class="content-container md-scrollbar"
+        style="background-color: #F0F0F7 !important;"
+      >
+        <div v-if="state == 'history'" class="card-container">
+          <md-card class="card" v-for="index in [1,2,3,4,5]" v-bind:key="index">
+            <md-card-header>
+              <div class="md-title">Card without hover effect</div>
+            </md-card-header>
+            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
 
-          <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
+            <md-card-actions>
+              <md-button>Action</md-button>
+              <md-button>Action</md-button>
+            </md-card-actions>
+          </md-card>
+        </div>
+        <div v-if="state == 'profile'">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">
+                <h1>{{firstName | capitalize}} {{lastName | capitalize}}</h1>
+              </div>
+            </md-card-header>
+            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
 
-          <md-card-actions>
-            <md-button>Action</md-button>
-            <md-button>Action</md-button>
-          </md-card-actions>
-        </md-card>
+            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
+          </md-card>
+        </div>
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -63,9 +87,9 @@ export default {
     showNavigation: false,
     showSidepanel: false,
     profile: "",
-    state: "",
-    firstname: "",
-    lastname: "",
+    state: "profile",
+    firstname: "KZHIWEI",
+    lastname: "ZHANG",
     description: "",
     experience: "",
     education: "",
@@ -79,16 +103,31 @@ export default {
     this.description = userData.description;
     this.experience = userData.experience;
     this.education = userData.experience;
+  },
+  methods: {
+    toProfile() {
+      this.state = "profile";
+    },
+    toHistory() {
+      this.state = "history";
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+body {
+  color: #f0f0f7 !important;
+}
+.content-container,
+.md-app-content {
+  height: 100%;
+  width: 100%;
+  // padding: 0 !important;
+}
 .page-container {
   height: 100%;
   overflow: hidden;
-  // position: relative;
-  // border: 1px solid rgba(#000, 0.12);
 }
 .md-app {
   // height: 100% !important;
@@ -159,7 +198,7 @@ export default {
   // height: 300px;
   width: 29%;
   margin-bottom: 2em;
-  margin: 1em 0;
+  margin: 0.5em 0;
   max-width: 640px !important;
   min-width: 300px;
   // max-height: 230px !important;
@@ -167,9 +206,9 @@ export default {
 .nav-left-menu-button {
   display: none;
 }
-@media screen and (max-width: 819px) {
+@media screen and (max-width: 945px) {
   .card {
-    width: 43%;
+    width: 100%;
     // max-width: 600px;
     margin-bottom: 1em;
   }
@@ -188,7 +227,8 @@ export default {
 }
 @media screen and (max-width: 620px) {
   .card {
-    width: 95%;
+    margin: 01em 0 !important;
+    width: 100%;
   }
   .nav-left-menu-button {
     display: block !important;
@@ -201,6 +241,9 @@ export default {
   }
   .nav-title {
     display: block !important;
+  }
+  .card-containe {
+    padding: 0 !important;
   }
 }
 </style>
