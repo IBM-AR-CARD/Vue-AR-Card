@@ -123,7 +123,7 @@
             <md-card-content class="content-line">
               <md-field class="gender-select">
                 <label class="gender-label">Gender</label>
-                <md-select v-model="gender" name="gender">
+                <md-select v-model="gender">
                   <md-option value="0">Male</md-option>
                   <md-option value="1">Female</md-option>
                   <md-option value="2">Perfer not to say</md-option>
@@ -238,6 +238,7 @@ export default {
         this.description = userData.description;
         this.experience = userData.experience;
         this.education = userData.experience;
+        this.gender = userData.gender ?? 2;
       } catch (err) {
         this.isInfinity = false;
         this.showSnackbar = true;
@@ -286,8 +287,9 @@ export default {
           description: this.description,
           experience: this.experience,
           education: this.education,
-          gender: this.gender
+          gender: parseInt(this.gender)
         };
+        console.log(parseObject);
         let response = await this.$http.post(
           this.$globalConfig.baseUrl + "/profile/update",
           parseObject,
