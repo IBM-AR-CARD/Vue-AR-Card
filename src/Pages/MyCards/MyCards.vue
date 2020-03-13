@@ -80,6 +80,7 @@
                 type="file"
                 ref="imageUpload"
                 v-on:change="handleImageUpload()"
+                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
                 style="display: none;"
               />
             </md-card-content>
