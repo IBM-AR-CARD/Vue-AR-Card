@@ -61,10 +61,46 @@
         <div v-if="state == 'profile'">
           <md-card class="card-container-profile">
             <md-card-header>
-              <div class="card-header-container">
-                <div class="md-title col-2">
-                  <h1>{{firstname | capitalize}} {{lastname | capitalize}}</h1>
+              <div class="card-header-container" v-if="!onEditName">
+                <div class="md-title">
+                  <h1>
+                    {{firstname | capitalize}} {{lastname | capitalize}}
+                    <md-button
+                      class="md-icon-button name-icon-edit"
+                      @click="onEditName = !onEditName"
+                    >
+                      <md-icon>edit</md-icon>
+                    </md-button>
+                  </h1>
+
                   <h2>@{{username}}</h2>
+                </div>
+              </div>
+              <div class="card-header-container" v-if="onEditName">
+                <div class="md-title col-2">
+                  <!-- <md-field> -->
+                  <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100">
+                      <md-field>
+                        <label>First Name</label>
+                        <md-input v-model="firstname" />
+                      </md-field>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-100">
+                      <md-field>
+                        <label>Last Name</label>
+                        <md-input v-model="lastname" />
+                      </md-field>
+                    </div>
+                    <md-button
+                      class="md-icon-button name-icon-edit"
+                      @click="onEditName = !onEditName"
+                    >
+                      <md-icon>done_all</md-icon>
+                    </md-button>
+                  </div>
+                  <!-- </md-field> -->
                 </div>
               </div>
             </md-card-header>
@@ -84,7 +120,16 @@
                 style="display: none;"
               />
             </md-card-content>
-
+            <md-card-content class="content-line">
+              <md-field class="gender-select">
+                <label class="gender-label">Gender</label>
+                <md-select v-model="gender" name="gender">
+                  <md-option value="0">Male</md-option>
+                  <md-option value="1">Female</md-option>
+                  <md-option value="2">Perfer not to say</md-option>
+                </md-select>
+              </md-field>
+            </md-card-content>
             <md-card-content class="content-line">
               <md-field class="content-field">
                 <label class="content-field-label">Description</label>
@@ -103,17 +148,10 @@
                 <md-textarea v-model="experience" md-autogrow></md-textarea>
               </md-field>
             </md-card-content>
-            <md-card-content class="content-line">
-              <md-field class="gender-select">
-                <label for="movie">Gender</label>
-                <md-select v-model="gender" name="gender">
-                  <md-option value="0">Male</md-option>
-                  <md-option value="1">Female</md-option>
-                  <md-option value="2">Perfer not to say</md-option>
-                </md-select>
-              </md-field>
-            </md-card-content>
-            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
+            <md-card-actions>
+              <md-button @click="profileUpdate()" class="md-raised md-primary">Done</md-button>
+              <md-button @click="getProfileData()" class="md-raised card-action-cancel">Cancel</md-button>
+            </md-card-actions>
           </md-card>
         </div>
         <md-snackbar
@@ -127,6 +165,14 @@
             @click="isInfinity? toLogin():onRetry()"
           >{{isInfinity ? 'Login' : 'Retry'}}</md-button>
         </md-snackbar>
+        <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
+          <span>{{updateProfileSuccess ? 'You have successful update you profile' : 'Connection timeout. please retry!' }}</span>
+          <md-button
+            class="retry-button"
+            @click="profileUpdate()"
+            v-if="!updateProfileSuccess"
+          >Retry</md-button>
+        </md-snackbar>
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -138,6 +184,8 @@
 export default {
   name: "MyCards",
   data: () => ({
+    _id: "",
+
     showNavigation: false,
     showSidepanel: false,
     profile: "",
@@ -151,7 +199,10 @@ export default {
     username: "",
     gender: 0,
     showSnackbar: false,
-    isInfinity: false
+    isInfinity: false,
+    onEditName: false,
+    updateProfileSuccess: true,
+    showSaveSnackbar: false
   }),
   created: async function() {
     await this.getProfileData();
@@ -180,6 +231,7 @@ export default {
         Object.assign(this.$globalData.userData, profile);
         let userData = this.$globalData.userData;
         this.username = userData.username;
+        this._id = userData._id;
         this.profile = userData.profile;
         this.firstname = userData.firstname;
         this.lastname = userData.lastname;
@@ -205,7 +257,6 @@ export default {
     async submitFile() {
       let formData = new FormData();
       formData.append("file", this.image);
-      console.log("Bearer " + this.$cookie.get("token"));
       try {
         let response = await this.$http.post(
           this.$globalConfig.baseUrl + "/upload",
@@ -221,6 +272,37 @@ export default {
       } catch (err) {
         this.isInfinity = false;
         this.showSnackbar = true;
+      }
+    },
+    async profileUpdate() {
+      try {
+        this.showSaveSnackbar = false;
+        let parseObject = {
+          _id: this._id,
+          username: this.username,
+          profile: this.profile,
+          firstname: this.firstname,
+          lastname: this.lastname,
+          description: this.description,
+          experience: this.experience,
+          education: this.education,
+          gender: this.gender
+        };
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/profile/update",
+          parseObject,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookie.get("token")
+            }
+          }
+        );
+        this.updateProfileSuccess = true;
+        this.showSaveSnackbar = true;
+        console.log(response);
+      } catch (error) {
+        this.updateProfileSuccess = false;
+        this.showSaveSnackbar = true;
       }
     }
   }
@@ -251,8 +333,21 @@ h3 {
   margin-right: 2em;
   color: #43425d;
 }
+.name-edit-left {
+  width: 5em;
+}
+.name-icon-edit {
+  display: inline-block;
+}
+.gender-label {
+  font-size: 1.3rem !important;
+  font-weight: bold;
+}
 .main-content-header {
   font-size: 1.5rem;
+}
+.card-action-cancel {
+  margin-left: 3em !important;
 }
 .content-line {
   display: flex;
