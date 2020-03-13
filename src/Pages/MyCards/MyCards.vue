@@ -8,7 +8,7 @@
         <!-- <span class="md-title">IBM AR BUSINESS CARD</span> -->
 
         <div class="md-toolbar-section-end">
-          <span class="toolbar-toprght-name">{{firstName }} {{lastName}}</span>
+          <span class="toolbar-toprght-name">{{firstname }} {{lastname}}</span>
           <img class="toolbar-toprght-icon" v-bind:src="profile" />
         </div>
       </md-app-toolbar>
@@ -63,23 +63,60 @@
             <md-card-header>
               <div class="card-header-container">
                 <div class="md-title col-2">
-                  <h1>{{firstName | capitalize}} {{lastName | capitalize}}</h1>
+                  <h1>{{firstname | capitalize}} {{lastname | capitalize}}</h1>
                   <h2>@{{username}}</h2>
                 </div>
               </div>
             </md-card-header>
             <md-card-content class="content-line">
               <h3>Avatar:</h3>
-              <img class="profile-image" v-bind:src="profile" />
+              <input
+                type="image"
+                v-bind:src="profile"
+                class="profile-image"
+                @click="$refs.imageUpload.click()"
+              />
+              <input
+                type="file"
+                ref="imageUpload"
+                v-on:change="handleImageUpload()"
+                style="display: none;"
+              />
             </md-card-content>
 
-            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
-
+            <md-card-content class="content-line">
+              <md-field class="content-field">
+                <label class="content-field-label">Description</label>
+                <md-textarea v-model="description" md-autogrow></md-textarea>
+              </md-field>
+            </md-card-content>
+            <md-card-content class="content-line">
+              <md-field class="content-field">
+                <label class="content-field-label">Education</label>
+                <md-textarea v-model="education" md-autogrow></md-textarea>
+              </md-field>
+            </md-card-content>
+            <md-card-content class="content-line">
+              <md-field class="content-field">
+                <label class="content-field-label">Experience</label>
+                <md-textarea v-model="experience" md-autogrow></md-textarea>
+              </md-field>
+            </md-card-content>
+            <md-card-content class="content-line">
+              <md-field class="gender-select">
+                <label for="movie">Gender</label>
+                <md-select v-model="gender" name="gender">
+                  <md-option value="0">Male</md-option>
+                  <md-option value="1">Female</md-option>
+                  <md-option value="2">Perfer not to say</md-option>
+                </md-select>
+              </md-field>
+            </md-card-content>
             <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
           </md-card>
         </div>
         <md-snackbar
-          :md-duration="isInfinity ? Infinity : duration"
+          :md-duration="isInfinity ? Infinity : 4000"
           :md-active.sync="showSnackbar"
           md-persistent
         >
@@ -103,6 +140,7 @@ export default {
     showNavigation: false,
     showSidepanel: false,
     profile: "",
+    image: "",
     state: "profile",
     firstname: "",
     lastname: "",
@@ -142,8 +180,8 @@ export default {
         let userData = this.$globalData.userData;
         this.username = userData.username;
         this.profile = userData.profile;
-        this.firstName = userData.firstname;
-        this.lastName = userData.lastname;
+        this.firstname = userData.firstname;
+        this.lastname = userData.lastname;
         this.description = userData.description;
         this.experience = userData.experience;
         this.education = userData.experience;
@@ -157,6 +195,32 @@ export default {
     },
     async onRetry() {
       await this.getProfileData();
+    },
+    handleImageUpload() {
+      this.image = this.$refs.imageUpload.files[0];
+      this.submitFile();
+      // console.log(this.image);
+    },
+    async submitFile() {
+      let formData = new FormData();
+      formData.append("file", this.image);
+      console.log("Bearer " + this.$cookie.get("token"));
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer " + this.$cookie.get("token")
+            }
+          }
+        );
+        this.profile = response.data.path;
+      } catch (err) {
+        this.isInfinity = false;
+        this.showSnackbar = true;
+      }
     }
   }
 };
@@ -184,6 +248,10 @@ h3 {
   margin-top: 0;
   font-size: 1.5rem;
   margin-right: 2em;
+  color: #43425d;
+}
+.main-content-header {
+  font-size: 1.5rem;
 }
 .content-line {
   display: flex;
@@ -196,6 +264,18 @@ h3 {
     opacity: 1;
   }
 }
+.gender-select {
+  width: 20em;
+}
+.content-field-label {
+  font-weight: bold;
+  font-size: 1.5rem !important;
+  margin-bottom: 1em !important;
+  color: #43425d;
+}
+// .content-field {
+//   padding-top: 0 !important;
+// }
 .profile-image {
   width: 128px;
   height: 128px;
