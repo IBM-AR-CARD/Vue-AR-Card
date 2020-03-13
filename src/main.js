@@ -7,9 +7,11 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
 import "./theme.scss";
 import axios from "axios";
+var VueCookie = require("vue-cookie");
 Vue.prototype.$http = axios;
 Vue.use(VueRouter);
 Vue.use(VueMaterial);
+Vue.use(VueCookie);
 const globalConfig = {
   baseUrl: "http://henryz.co:8080"
 };

@@ -1,11 +1,11 @@
 <template>
   <div class="page-container">
-    <md-app md-waterfall md-mode="fixed">
+    <md-app md-waterfall md-mode="fixed" style="background-color: #F0F0F7 !important;">
       <md-app-toolbar class="md-primary">
         <md-button class="md-icon-button nav-left-menu-button" @click="showNavigation = true">
           <md-icon>menu</md-icon>
         </md-button>
-        <span class="md-title">IBM AR BUSINESS CARD</span>
+        <!-- <span class="md-title">IBM AR BUSINESS CARD</span> -->
 
         <div class="md-toolbar-section-end">
           <span class="toolbar-toprght-name">{{firstName }} {{lastName}}</span>
@@ -15,7 +15,7 @@
 
       <md-app-drawer :md-active.sync="showNavigation" md-swipeable md-permanent="full">
         <md-toolbar class="md-transparent" md-elevation="0">
-          <span class="md-title nav-title">{{state | capitalize}}</span>
+          <span class="md-title nav-title">IBM AR CARD</span>
         </md-toolbar>
 
         <md-list class="nav-list">
@@ -44,10 +44,7 @@
         </md-list>
       </md-app-drawer>
       <!-- <div class="card-container"> -->
-      <md-app-content
-        class="content-container md-scrollbar"
-        style="background-color: #F0F0F7 !important;"
-      >
+      <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
         <div v-if="state == 'history'" class="card-container">
           <md-card class="card" v-for="index in [1,2,3,4,5]" v-bind:key="index">
             <md-card-header>
@@ -64,15 +61,30 @@
         <div v-if="state == 'profile'">
           <md-card>
             <md-card-header>
-              <div class="md-title">
-                <h1>{{firstName | capitalize}} {{lastName | capitalize}}</h1>
+              <div class="card-header-container">
+                <div class="md-title col-2">
+                  <h1>{{firstName | capitalize}} {{lastName | capitalize}}</h1>
+                  <h2>@{{username}}</h2>
+                </div>
               </div>
+              <img class="card-header-image" v-bind:src="profile" />
             </md-card-header>
             <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
 
             <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
           </md-card>
         </div>
+        <md-snackbar
+          :md-duration="isInfinity ? Infinity : duration"
+          :md-active.sync="showSnackbar"
+          md-persistent
+        >
+          <span>{{isInfinity ? 'You haven\'t login, Please login' : 'Connection timeout. please retry!' }}</span>
+          <md-button
+            class="retry-button"
+            @click="isInfinity? toLogin():onRetry()"
+          >{{isInfinity ? 'Login' : 'Retry'}}</md-button>
+        </md-snackbar>
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -88,21 +100,18 @@ export default {
     showSidepanel: false,
     profile: "",
     state: "profile",
-    firstname: "KZHIWEI",
-    lastname: "ZHANG",
+    firstname: "",
+    lastname: "",
     description: "",
     experience: "",
     education: "",
-    gender: 0
+    username: "",
+    gender: 0,
+    showSnackbar: false,
+    isInfinity: false
   }),
-  created: function() {
-    let userData = this.$globalData.userData;
-    this.profile = userData.profile;
-    this.firstName = userData.firstname;
-    this.lastName = userData.lastname;
-    this.description = userData.description;
-    this.experience = userData.experience;
-    this.education = userData.experience;
+  created: async function() {
+    await this.getProfileData();
   },
   methods: {
     toProfile() {
@@ -110,20 +119,86 @@ export default {
     },
     toHistory() {
       this.state = "history";
+    },
+    async getProfileData() {
+      let _id = this.$cookie.get("_id");
+      let token = this.$cookie.get("token");
+      if (token == null || _id == null) {
+        this.isInfinity = true;
+        this.showSnackbar = true;
+        return;
+      }
+      try {
+        let profile = (
+          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get", {
+            _id: _id
+          })
+        ).data;
+        Object.assign(this.$globalData.userData, profile);
+        let userData = this.$globalData.userData;
+        this.username = userData.username;
+        this.profile = userData.profile;
+        this.firstName = userData.firstname;
+        this.lastName = userData.lastname;
+        this.description = userData.description;
+        this.experience = userData.experience;
+        this.education = userData.experience;
+      } catch (err) {
+        this.isInfinity = false;
+        this.showSnackbar = true;
+      }
+    },
+    toLogin() {
+      this.$router.push("/");
+    },
+    async onRetry() {
+      await this.getProfileData();
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-body {
-  color: #f0f0f7 !important;
+div {
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+  animation-duration: 0.5s;
 }
-.content-container,
+h1 {
+  line-height: 3rem;
+  margin-bottom: 0em;
+  color: #43425d;
+}
+h2 {
+  font-weight: normal;
+  margin-top: 0em;
+  font-size: 1rem;
+}
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.card-header-image {
+  width: 90px;
+  height: 90px;
+  clip-path: circle(45px at center);
+  display: block;
+}
+.retry-button {
+  color: white !important;
+  font-weight: bold;
+}
 .md-app-content {
-  height: 100%;
+  // height: auto !important;
   width: 100%;
   // padding: 0 !important;
+  height: auto !important;
 }
 .page-container {
   height: 100%;
@@ -205,6 +280,22 @@ body {
 }
 .nav-left-menu-button {
   display: none;
+}
+.col-1 {
+  width: 23%;
+}
+.col-2 {
+  width: 47%;
+}
+.col-3 {
+  width: 73%;
+}
+.col-4 {
+  width: 98%;
+}
+.card-header-container {
+  // display: flex;
+  justify-content: space-between;
 }
 @media screen and (max-width: 945px) {
   .card {

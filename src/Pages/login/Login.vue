@@ -114,6 +114,8 @@ export default {
         this.errorMsg = "";
         this.$globalData.userData._id = data._id;
         this.$globalData.userData.token = data.token;
+        this.$cookie.set("_id", data._id, "2147483647");
+        this.$cookie.set("token", data.token, "2147483647");
         console.log(this.$globalData.userData);
         let profile = (
           await this.$http.post(this.$globalConfig.baseUrl + "/profile/get", {
@@ -122,7 +124,6 @@ export default {
         ).data;
         Object.assign(this.$globalData.userData, profile);
         console.log(this.$globalData.userData);
-
         this.$router.push("MyCards");
       } catch (error) {
         console.log(error);

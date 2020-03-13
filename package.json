@@ -13,6 +13,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
+    "vue-cookie": "^1.1.4",
     "vue-material": "^1.0.0-beta-11"
   },
   "devDependencies": {
