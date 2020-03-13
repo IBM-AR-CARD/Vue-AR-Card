@@ -59,7 +59,7 @@
           </md-card>
         </div>
         <div v-if="state == 'profile'">
-          <md-card>
+          <md-card class="card-container-profile">
             <md-card-header>
               <div class="card-header-container">
                 <div class="md-title col-2">
@@ -67,8 +67,12 @@
                   <h2>@{{username}}</h2>
                 </div>
               </div>
-              <img class="card-header-image" v-bind:src="profile" />
             </md-card-header>
+            <md-card-content class="content-line">
+              <h3>Avatar:</h3>
+              <img class="profile-image" v-bind:src="profile" />
+            </md-card-content>
+
             <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
 
             <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
@@ -176,6 +180,14 @@ h2 {
   margin-top: 0em;
   font-size: 1rem;
 }
+h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  margin-right: 2em;
+}
+.content-line {
+  display: flex;
+}
 @keyframes fadeInOpacity {
   0% {
     opacity: 0;
@@ -184,11 +196,12 @@ h2 {
     opacity: 1;
   }
 }
-.card-header-image {
-  width: 90px;
-  height: 90px;
-  clip-path: circle(45px at center);
-  display: block;
+.profile-image {
+  width: 128px;
+  height: 128px;
+  // clip-path: circle(64px at center);
+  // display: block;
+  vertical-align: text-top;
 }
 .retry-button {
   color: white !important;
@@ -199,6 +212,9 @@ h2 {
   width: 100%;
   // padding: 0 !important;
   height: auto !important;
+}
+.card-container-profile {
+  padding: 3em 10%;
 }
 .page-container {
   height: 100%;
@@ -315,6 +331,9 @@ h2 {
   .nav-title {
     display: none !important;
   }
+  .card-container-profile {
+    padding: 3em 2%;
+  }
 }
 @media screen and (max-width: 620px) {
   .card {
@@ -335,6 +354,9 @@ h2 {
   }
   .card-containe {
     padding: 0 !important;
+  }
+  .card-container-profile {
+    padding: 3em 0%;
   }
 }
 </style>
