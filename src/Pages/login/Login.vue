@@ -40,32 +40,24 @@
           </div>
           <form class="container-inputfield">
             <md-field>
-              <label>FirstName</label>
-              <md-input></md-input>
-            </md-field>
-            <md-field>
-              <label>LastName</label>
-              <md-input></md-input>
-            </md-field>
-            <md-field>
               <label>UserName</label>
-              <md-input></md-input>
+              <md-input v-model="registerUserName"></md-input>
             </md-field>
             <md-field>
               <label>Email</label>
-              <md-input></md-input>
+              <md-input v-model="registerEmail"></md-input>
             </md-field>
             <md-field>
               <label>Password</label>
-              <md-input></md-input>
+              <md-input type="password" v-model="registerPassword"></md-input>
             </md-field>
             <md-field>
               <label>Comfirm Password</label>
-              <md-input></md-input>
+              <md-input type="password" v-model="registerPasswordConfirm"></md-input>
             </md-field>
           </form>
-          <md-checkbox>I agree with terms and conditions</md-checkbox>
-          <a class="container-buttons-skip">Sign up</a>
+          <md-checkbox v-model="agree">I agree with terms and conditions</md-checkbox>
+          <a class="container-buttons-skip" v-on:click="onRegister()">Sign up</a>
           <a v-on:click="toLogin()" class="buttons-Already">Already have an account? Sign in.</a>
         </div>
       </div>
@@ -92,9 +84,11 @@ export default {
   name: "home",
   methods: {
     toRegister() {
+      this.errorMsg = "";
       this.state = "register";
     },
     toLogin() {
+      this.errorMsg = "";
       this.state = "login";
     },
     toForgot() {
@@ -137,6 +131,44 @@ export default {
         console.log(error);
         this.errorMsg = error.response.data.error;
       }
+    },
+    async onRegister() {
+      this.errorMsg = "";
+      if (!this.agree) {
+        this.errorMsg = "please agree the term and conditions";
+        return;
+      } else if (
+        !this.registerPassword &&
+        this.registerPassword != this.registerPasswordConfirm
+      ) {
+        this.errorMsg = "password does not match";
+        return;
+      }
+      try {
+        await this.$http.post(this.$globalConfig.baseUrl + "/user/register", {
+          username: this.registerUserName, // min length 3, max length 25
+          email: this.registerEmail,
+          password: this.registerPassword // min length 5, max length 25
+        });
+        this.errorMsg = "";
+        let dataRegister = (
+          await this.$http.post(this.$globalConfig.baseUrl + "/user/login", {
+            email: this.registerEmail,
+            password: this.registerPassword
+          })
+        ).data;
+        this.$globalData.userData._id = dataRegister._id;
+        this.$globalData.userData.token = dataRegister.token;
+        this.$cookies.set("_id", dataRegister._id, "2147483647");
+        this.$cookies.set("token", dataRegister.token, "2147483647");
+        this.$cookies.set("email", this.registerEmail, "2147483647");
+        this.$cookies.set("password", this.registerPassword, "2147483647");
+        this.$cookies.set("remember", true, "2147483647");
+        this.$router.push("MyCards");
+      } catch (error) {
+        console.log(error);
+        this.errorMsg = error.response.data.error;
+      }
     }
   },
   data: function() {
@@ -145,7 +177,12 @@ export default {
       errorMsg: "",
       loginEmail: "",
       loginPassword: "",
-      remember: false
+      registerEmail: "",
+      registerPasswordConfirm: "",
+      registerPassword: "",
+      registerUserName: "",
+      remember: false,
+      agree: false
     };
   },
   created: async function() {

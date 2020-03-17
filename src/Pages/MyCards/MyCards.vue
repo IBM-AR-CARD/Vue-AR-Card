@@ -9,7 +9,10 @@
 
         <div class="md-toolbar-section-end">
           <span class="toolbar-toprght-name">{{firstname }} {{lastname}}</span>
-          <img class="toolbar-toprght-icon" v-bind:src="profile" />
+          <img class="toolbar-toprght-icon" v-if="profile" v-bind:src="profile" />
+          <div>
+            <md-icon class="toolbar-toprght-icon" v-if="!profile">person</md-icon>
+          </div>
         </div>
       </md-app-toolbar>
 
@@ -121,7 +124,11 @@
                 v-bind:src="profile"
                 class="profile-image"
                 @click="$refs.imageUpload.click()"
+                v-if="profile"
               />
+              <div v-if="!profile" @click="$refs.imageUpload.click()">
+                <md-icon class="profile-image md-size-3x">person</md-icon>
+              </div>
               <input
                 type="file"
                 ref="imageUpload"
@@ -198,7 +205,7 @@ export default {
 
     showNavigation: false,
     showSidepanel: false,
-    profile: "",
+    profile: null,
     image: "",
     state: "profile",
     firstname: "",
@@ -247,9 +254,12 @@ export default {
       }
       try {
         let profile = (
-          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get", {
-            _id: _id
-          })
+          await this.$http.post(
+            this.$globalConfig.baseUrl + "/profile/get?_id=" + _id,
+            {
+              _id: _id
+            }
+          )
         ).data;
         Object.assign(this.$globalData.userData, profile);
         let userData = this.$globalData.userData;
