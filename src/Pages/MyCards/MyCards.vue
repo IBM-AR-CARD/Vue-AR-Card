@@ -42,6 +42,16 @@
             <span class="md-list-item-text nav-list-item-text">Favourite</span>
           </md-list-item>
         </md-list>
+        <md-list class="nav-list log-out-button">
+          <md-list-item class="nav-list-item" v-on:click="logOut()">
+            <md-icon color="white" class="nav-list-icon">exit_to_app</md-icon>
+            <span class="md-list-item-text nav-list-item-text">Log out</span>
+          </md-list-item>
+        </md-list>
+        <!-- <md-button class="log-out-button">
+          <md-icon color="white" class="nav-list-icon">exit_to_app</md-icon>
+          <span class="md-list-item-text nav-list-item-text">Log out</span>
+        </md-button>-->
       </md-app-drawer>
       <!-- <div class="card-container"> -->
       <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
@@ -209,14 +219,27 @@ export default {
   },
   methods: {
     toProfile() {
+      this.showNavigation = false;
       this.state = "profile";
     },
     toHistory() {
+      this.showNavigation = false;
       this.state = "history";
     },
+    logOut() {
+      // this.$cookies.delete("_id");
+      // this.$cookies.delete("token");
+      // this.$cookies.delete("password");
+      // this.$cookies.delete("email");
+      // this.$cookies.delete("remember");
+      console.log(this.$cookies);
+
+      this.$cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
+      this.toLogin();
+    },
     async getProfileData() {
-      let _id = this.$cookie.get("_id");
-      let token = this.$cookie.get("token");
+      let _id = this.$cookies.get("_id");
+      let token = this.$cookies.get("token");
       if (token == null || _id == null) {
         this.isInfinity = true;
         this.showSnackbar = true;
@@ -265,7 +288,7 @@ export default {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer " + this.$cookie.get("token")
+              Authorization: "Bearer " + this.$cookies.get("token")
             }
           }
         );
@@ -295,7 +318,7 @@ export default {
           parseObject,
           {
             headers: {
-              Authorization: "Bearer " + this.$cookie.get("token")
+              Authorization: "Bearer " + this.$cookies.get("token")
             }
           }
         );
@@ -335,6 +358,10 @@ h3 {
   margin-right: 2em;
   color: #43425d;
 }
+.nav-list-item-end {
+  background-color: #43425d;
+  // border: 1px solid red;
+}
 .name-edit-left {
   width: 5em;
 }
@@ -344,6 +371,15 @@ h3 {
 .gender-label {
   font-size: 1.3rem !important;
   font-weight: bold;
+}
+.log-out-button {
+  position: absolute;
+  width: 100%;
+  // left: calc(50% - 9em / 2);
+  bottom: 3em;
+}
+.md-button-content {
+  display: flex !important;
 }
 .main-content-header {
   font-size: 1.5rem;

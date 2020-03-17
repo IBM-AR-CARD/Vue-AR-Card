@@ -19,7 +19,7 @@
           </md-field>
         </form>
         <div class="loginstate">
-          <md-checkbox>Remember me</md-checkbox>
+          <md-checkbox v-model="remember">Remember me</md-checkbox>
           <md-button
             v-on:click="toForgot()"
             class="loginstate-forgot"
@@ -114,8 +114,16 @@ export default {
         this.errorMsg = "";
         this.$globalData.userData._id = data._id;
         this.$globalData.userData.token = data.token;
-        this.$cookie.set("_id", data._id, "2147483647");
-        this.$cookie.set("token", data.token, "2147483647");
+        this.$cookies.set("_id", data._id, "2147483647");
+        this.$cookies.set("token", data.token, "2147483647");
+        if (this.remember) {
+          this.$cookies.set("email", this.loginEmail, "2147483647");
+          this.$cookies.set("password", this.loginPassword, "2147483647");
+          this.$cookies.set("remember", true, "2147483647");
+        } else {
+          this.$cookies.remove("email");
+          this.$cookies.remove("password");
+        }
         // console.log(this.$globalData.userData);
         // let profile = (
         //   await this.$http.post(this.$globalConfig.baseUrl + "/profile/get", {
@@ -135,9 +143,15 @@ export default {
     return {
       state: "login",
       errorMsg: "",
-      loginEmail: "1010482029@qq.com",
-      loginPassword: "66871068"
+      loginEmail: "",
+      loginPassword: "",
+      remember: false
     };
+  },
+  created: async function() {
+    this.loginEmail = this.$cookies.get("email") ?? "";
+    this.loginPassword = this.$cookies.get("password") ?? "";
+    this.remember = this.$cookies.get("remember") == "true" ?? false;
   }
 };
 </script>
