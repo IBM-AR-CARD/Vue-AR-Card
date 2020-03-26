@@ -27,7 +27,21 @@ globalConfig.install = function() {
 Vue.use(globalConfig);
 
 const globalData = {
-  userData: {}
+  userData: {},
+  modalList: [
+    "ManInSuit",
+    "BusinessWomanPFB",
+    "TestMale",
+    "Luffy",
+    "FitFemale",
+    "Jiraiya",
+    "YodaRigged",
+    "BusinessMale",
+    "BusinessFemale",
+    "SmartMale",
+    "UnityChan",
+    "SmartFemale"
+  ]
 };
 
 globalData.install = function() {

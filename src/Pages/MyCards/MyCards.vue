@@ -117,36 +117,72 @@
                 </div>
               </div>
             </md-card-header>
-            <md-card-content class="content-line">
-              <h3>Avatar:</h3>
-              <input
-                type="image"
-                v-bind:src="profile"
-                class="profile-image"
-                @click="$refs.imageUpload.click()"
-                v-if="profile"
-              />
-              <div v-if="!profile" @click="$refs.imageUpload.click()">
-                <md-icon class="profile-image md-size-3x">person</md-icon>
+            <div class="top-detail-container">
+              <div class="col-2">
+                <md-card-content class="content-line">
+                  <h3>Avatar:</h3>
+                  <input
+                    type="image"
+                    v-bind:src="profile"
+                    class="profile-image"
+                    @click="$refs.imageUpload.click()"
+                    v-if="profile"
+                  />
+                  <div v-if="!profile" @click="$refs.imageUpload.click()">
+                    <md-icon class="profile-image md-size-4x">person</md-icon>
+                  </div>
+                  <input
+                    type="file"
+                    ref="imageUpload"
+                    v-on:change="handleImageUpload()"
+                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                    style="display: none;"
+                  />
+                </md-card-content>
+                <md-card-content class="content-line">
+                  <md-field class="on-select">
+                    <label class="select-label">Gender</label>
+                    <md-select v-model="gender">
+                      <md-option value="0">Male</md-option>
+                      <md-option value="1">Female</md-option>
+                      <md-option value="2">Perfer not to say</md-option>
+                    </md-select>
+                  </md-field>
+                </md-card-content>
+                <md-card-content class="content-line">
+                  <md-field class="on-select">
+                    <label class="select-label">Model</label>
+                    <md-select v-model="model">
+                      <md-option
+                        v-for="item in $globalData.modalList"
+                        v-bind:key="item"
+                        v-bind:value="item"
+                      >{{item}}</md-option>
+                    </md-select>
+                  </md-field>
+                </md-card-content>
               </div>
-              <input
-                type="file"
-                ref="imageUpload"
-                v-on:change="handleImageUpload()"
-                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                style="display: none;"
-              />
-            </md-card-content>
-            <md-card-content class="content-line">
-              <md-field class="gender-select">
-                <label class="gender-label">Gender</label>
-                <md-select v-model="gender">
-                  <md-option value="0">Male</md-option>
-                  <md-option value="1">Female</md-option>
-                  <md-option value="2">Perfer not to say</md-option>
-                </md-select>
-              </md-field>
-            </md-card-content>
+              <div class="col-2 start-from-bottom">
+                <md-card-content class="content-line">
+                  <md-field class="content-field">
+                    <label class="content-field-label">Website</label>
+                    <md-textarea v-model="website" md-autogrow></md-textarea>
+                  </md-field>
+                </md-card-content>
+                <md-card-content class="content-line">
+                  <md-field class="content-field">
+                    <label class="content-field-label">Phone</label>
+                    <md-textarea v-model="phone" md-autogrow></md-textarea>
+                  </md-field>
+                </md-card-content>
+                <md-card-content class="content-line">
+                  <md-field class="content-field">
+                    <label class="content-field-label">Email</label>
+                    <md-textarea v-model="email" md-autogrow></md-textarea>
+                  </md-field>
+                </md-card-content>
+              </div>
+            </div>
             <md-card-content class="content-line">
               <md-field class="content-field">
                 <label class="content-field-label">Description</label>
@@ -202,7 +238,6 @@ export default {
   name: "MyCards",
   data: () => ({
     _id: "",
-
     showNavigation: false,
     showSidepanel: false,
     profile: null,
@@ -213,7 +248,11 @@ export default {
     description: "",
     experience: "",
     education: "",
+    model: "",
     username: "",
+    website: "",
+    phone: "",
+    email: "",
     gender: 0,
     showSnackbar: false,
     isInfinity: false,
@@ -266,6 +305,10 @@ export default {
         this.username = userData.username;
         this._id = userData._id;
         this.profile = userData.profile;
+        this.model = userData.model;
+        this.website = userData.website;
+        this.phone = userData.phone;
+        this.email = userData.email;
         this.firstname = userData.firstname;
         this.lastname = userData.lastname;
         this.description = userData.description;
@@ -320,7 +363,11 @@ export default {
           description: this.description,
           experience: this.experience,
           education: this.education,
-          gender: parseInt(this.gender)
+          gender: parseInt(this.gender),
+          phone: this.phone,
+          website: this.website,
+          email: this.email,
+          model: this.model
         };
         console.log(parseObject);
         let response = await this.$http.post(
@@ -365,8 +412,11 @@ h2 {
 h3 {
   margin-top: 0;
   font-size: 1.5rem;
-  margin-right: 2em;
+  margin-right: 15%;
   color: #43425d;
+}
+.top-detail-container {
+  display: flex;
 }
 .nav-list-item-end {
   background-color: #43425d;
@@ -378,7 +428,7 @@ h3 {
 .name-icon-edit {
   display: inline-block;
 }
-.gender-label {
+.select-label {
   font-size: 1.3rem !important;
   font-weight: bold;
 }
@@ -408,8 +458,13 @@ h3 {
     opacity: 1;
   }
 }
-.gender-select {
-  width: 20em;
+.on-select {
+  width: 100%;
+}
+
+.start-from-bottom {
+  // align-content: flex-end;
+  padding-top: 21px;
 }
 .content-field-label {
   font-weight: bold;
@@ -421,8 +476,8 @@ h3 {
 //   padding-top: 0 !important;
 // }
 .profile-image {
-  width: 128px;
-  height: 128px;
+  width: 96px;
+  height: 96px;
   // clip-path: circle(64px at center);
   // display: block;
   vertical-align: text-top;
@@ -581,6 +636,19 @@ h3 {
   }
   .card-container-profile {
     padding: 3em 0%;
+  }
+  .top-detail-container {
+    flex-direction: column;
+  }
+  .col-2 {
+    width: 100%;
+  }
+  h3 {
+    margin-right: 3em;
+  }
+  .start-from-bottom {
+    // align-content: flex-end;
+    padding-top: 0;
   }
 }
 </style>
