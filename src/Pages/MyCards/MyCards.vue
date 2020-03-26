@@ -1,22 +1,41 @@
 <template>
   <div class="page-container">
-    <md-app md-waterfall md-mode="fixed" style="background-color: #F0F0F7 !important;">
+    <md-app
+      md-waterfall
+      md-mode="fixed"
+      style="background-color: #F0F0F7 !important;"
+    >
       <md-app-toolbar class="md-primary">
-        <md-button class="md-icon-button nav-left-menu-button" @click="showNavigation = true">
+        <md-button
+          class="md-icon-button nav-left-menu-button"
+          @click="showNavigation = true"
+        >
           <md-icon>menu</md-icon>
         </md-button>
         <!-- <span class="md-title">IBM AR BUSINESS CARD</span> -->
 
         <div class="md-toolbar-section-end">
-          <span class="toolbar-toprght-name">{{firstname }} {{lastname}}</span>
-          <img class="toolbar-toprght-icon" v-if="profile" v-bind:src="profile" />
+          <span class="toolbar-toprght-name"
+            >{{ firstname }} {{ lastname }}</span
+          >
+          <img
+            class="toolbar-toprght-icon"
+            v-if="profile"
+            v-bind:src="profile"
+          />
           <div>
-            <md-icon class="toolbar-toprght-icon" v-if="!profile">person</md-icon>
+            <md-icon class="toolbar-toprght-icon" v-if="!profile"
+              >person</md-icon
+            >
           </div>
         </div>
       </md-app-toolbar>
 
-      <md-app-drawer :md-active.sync="showNavigation" md-swipeable md-permanent="full">
+      <md-app-drawer
+        :md-active.sync="showNavigation"
+        md-swipeable
+        md-permanent="full"
+      >
         <md-toolbar class="md-transparent" md-elevation="0">
           <span class="md-title nav-title">IBM AR CARD</span>
         </md-toolbar>
@@ -24,7 +43,7 @@
         <md-list class="nav-list">
           <md-list-item
             v-on:click="toProfile()"
-            v-bind:class="{ 'nav-list-item-onselect': state=='profile' }"
+            v-bind:class="{ 'nav-list-item-onselect': state == 'profile' }"
             class="nav-list-item"
           >
             <md-icon color="white" class="nav-list-icon">person</md-icon>
@@ -33,11 +52,13 @@
 
           <md-list-item
             v-on:click="toHistory()"
-            v-bind:class="{ 'nav-list-item-onselect': state=='history' }"
+            v-bind:class="{ 'nav-list-item-onselect': state == 'history' }"
             class="nav-list-item"
           >
             <md-icon color="white" class="nav-list-icon">history</md-icon>
-            <span class="md-list-item-text nav-list-item-text">Scan history</span>
+            <span class="md-list-item-text nav-list-item-text"
+              >Scan history</span
+            >
           </md-list-item>
 
           <md-list-item class="nav-list-item">
@@ -57,14 +78,17 @@
         </md-button>-->
       </md-app-drawer>
       <!-- <div class="card-container"> -->
-      <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
+      <md-app-content
+        class="md-scrollbar"
+        style="background-color: #F0F0F7 !important;"
+      >
         <div v-if="state == 'profile'">
           <md-card class="card-container-profile">
             <md-card-header>
               <div class="card-header-container" v-if="!onEditName">
                 <div class="md-title">
                   <h1>
-                    {{firstname | capitalize}} {{lastname | capitalize}}
+                    {{ firstname | capitalize }} {{ lastname | capitalize }}
                     <md-button
                       class="md-icon-button name-icon-edit"
                       @click="onEditName = !onEditName"
@@ -73,7 +97,7 @@
                     </md-button>
                   </h1>
 
-                  <h2>@{{username}}</h2>
+                  <h2>@{{ username }}</h2>
                 </div>
               </div>
               <div class="card-header-container" v-if="onEditName">
@@ -144,7 +168,8 @@
                         v-for="item in $globalData.modalList"
                         v-bind:key="item"
                         v-bind:value="item"
-                      >{{item}}</md-option>
+                        >{{ item }}</md-option
+                      >
                     </md-select>
                   </md-field>
                 </md-card-content>
@@ -189,16 +214,51 @@
               </md-field>
             </md-card-content>
             <md-card-actions>
-              <md-button @click="profileUpdate()" class="md-raised md-primary">Done</md-button>
-              <md-button @click="getProfileData()" class="md-raised card-action-cancel">Cancel</md-button>
+              <md-button @click="profileUpdate()" class="md-raised md-primary"
+                >Done</md-button
+              >
+              <md-button
+                @click="getProfileData()"
+                class="md-raised card-action-cancel"
+                >Cancel</md-button
+              >
             </md-card-actions>
           </md-card>
+          <md-snackbar
+            :md-duration="isInfinity ? Infinity : 4000"
+            :md-active.sync="showSnackbar"
+            md-persistent
+          >
+            <span>{{
+              isInfinity
+                ? "You haven't login, Please login"
+                : "Connection timeout. please retry!"
+            }}</span>
+            <md-button
+              class="retry-button"
+              @click="isInfinity ? toLogin() : onRetry()"
+              >{{ isInfinity ? "Login" : "Retry" }}</md-button
+            >
+          </md-snackbar>
+          <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
+            <span>{{
+              updateProfileSuccess
+                ? "You have successful update you profile"
+                : "Connection timeout. please retry!"
+            }}</span>
+            <md-button
+              class="retry-button"
+              @click="profileUpdate()"
+              v-if="!updateProfileSuccess"
+              >Retry</md-button
+            >
+          </md-snackbar>
         </div>
         <div v-if="state == 'history'">
           <div v-if="!historyList" class="card-container">
             <md-card
               class="card"
-              v-for="index in Array.from({length: 9}, (x,i) => i)"
+              v-for="index in Array.from({ length: 9 }, (x, i) => i)"
               v-bind:key="index"
             >
               <md-card-content>
@@ -222,53 +282,102 @@
             </md-card>
           </div>
           <div v-if="historyList" class="card-container">
-            <md-dialog :md-active.sync="showDetailDialog">
-              <md-tabs md-dynamic-height>
-                <md-tab md-label="General">
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                </md-tab>
-
-                <md-tab md-label="Activity">
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                </md-tab>
-
-                <md-tab md-label="Account">
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                </md-tab>
-              </md-tabs>
-
-              <md-dialog-actions>
-                <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-                <md-button class="md-primary" @click="showDialog = false">Save</md-button>
-              </md-dialog-actions>
+            <md-dialog
+              :md-active.sync="showDetailDialog"
+              :md-fullscreen="false"
+              @md-closed="
+                () => {
+                  this.dialogUser = null;
+                }
+              "
+            >
+              <md-dialog-content class="md-scrollbar">
+                <md-dialog-title v-if="dialogUser">
+                  <div class="md-dialog-title-left" v-if="dialogUser">
+                    <div class="md-title">
+                      {{ dialogUser.firstname }} {{ dialogUser.lastname }}
+                    </div>
+                    <div class="md-subhead">@{{ dialogUser.username }}</div>
+                  </div>
+                  <img
+                    v-if="dialogUser"
+                    class="profile-image md-dialog-title-right"
+                    v-bind:src="dialogUser.profile"
+                  />
+                  <md-progress-bar
+                    v-if="!dialogUser"
+                    md-mode="indeterminate"
+                  ></md-progress-bar>
+                </md-dialog-title>
+                <md-divider></md-divider>
+                <md-content v-if="dialogUser">
+                  <label class="md-body-2">Gender:</label>
+                  <p v-if="">Known</p>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.email">
+                  <span class="md-body-2">Email:</span> {{ dialogUser.email }}
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.website">
+                  <span class="md-body-2">Website:</span>
+                  <a v-bind:href="dialogUser.website">{{
+                    dialogUser.website
+                  }}</a>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.phone">
+                  <span class="md-body-2">Phone:</span> {{ dialogUser.phone }}
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.description != ''">
+                  <label class="md-body-2">Description:</label>
+                  <p>{{ dialogUser.description }}</p>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.experience != ''">
+                  <label class="md-body-2">Experience:</label>
+                  <p>{{ dialogUser.experience }}</p>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.education != ''">
+                  <label class="md-body-2">Education:</label>
+                  <p>{{ dialogUser.education }}</p>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-dialog-actions>
+                  <md-button
+                    class="md-primary"
+                    @click="showDetailDialog = false"
+                    >Close</md-button
+                  >
+                </md-dialog-actions>
+              </md-dialog-content>
             </md-dialog>
             <md-card
               class="card"
-              v-for="(index,item) in historyList"
-              v-bind:key="item"
+              v-for="item in historyList"
+              v-bind:key="item._id"
               md-with-hover
             >
-              <div @click="showUserDetail">
+              <div @click="showUserDetail(item)">
                 <md-card-header>
-                  <h1 class="card-header">{{item}}</h1>
+                  <md-card-header-text>
+                    <div class="md-title">{{ item.name }}</div>
+                    <div class="md-subhead">@{{ item.username }}</div>
+                  </md-card-header-text>
+
+                  <md-card-media>
+                    <img v-bind:src="item.profile" alt="People" />
+                  </md-card-media>
                 </md-card-header>
-                <md-card-content>
-                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
-                </md-card-content>
-                <md-card-content>
-                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
-                </md-card-content>
               </div>
               <md-card-actions>
                 <md-button class="md-icon-button">
-                  <md-icon>favorite</md-icon>
+                  <md-icon v-if="item.isFav">favorite</md-icon>
+                  <md-icon v-if="!item.isFav">favorite_border</md-icon>
                 </md-button>
 
                 <md-button class="md-icon-button">
@@ -278,26 +387,6 @@
             </md-card>
           </div>
         </div>
-
-        <md-snackbar
-          :md-duration="isInfinity ? Infinity : 4000"
-          :md-active.sync="showSnackbar"
-          md-persistent
-        >
-          <span>{{isInfinity ? 'You haven\'t login, Please login' : 'Connection timeout. please retry!' }}</span>
-          <md-button
-            class="retry-button"
-            @click="isInfinity? toLogin():onRetry()"
-          >{{isInfinity ? 'Login' : 'Retry'}}</md-button>
-        </md-snackbar>
-        <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
-          <span>{{updateProfileSuccess ? 'You have successful update you profile' : 'Connection timeout. please retry!' }}</span>
-          <md-button
-            class="retry-button"
-            @click="profileUpdate()"
-            v-if="!updateProfileSuccess"
-          >Retry</md-button>
-        </md-snackbar>
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -324,6 +413,7 @@ export default {
     username: "",
     website: "",
     phone: "",
+    dialogUser: null,
     email: "",
     gender: 0,
     showSnackbar: false,
@@ -474,10 +564,17 @@ export default {
         }
       );
       this.historyList = response.data.list;
-      console.log(this.historyList);
     },
-    showUserDetail() {
+    async showUserDetail(user) {
+      let id = user.userid;
       this.showDetailDialog = true;
+      let response = await this.$http.post(
+        this.$globalConfig.baseUrl + "/profile/get?_id=" + id
+      );
+      setTimeout(() => {
+        this.dialogUser = response.data;
+      }, 1000);
+      console.log(response.data);
     }
   }
 };
@@ -508,6 +605,7 @@ h3 {
   color: #43425d;
 }
 .card-header {
+  font-size: 1.5em;
   line-height: 1rem;
   margin-bottom: 0.3em;
   margin-top: 0;
@@ -558,7 +656,10 @@ h3 {
 .on-select {
   width: 100%;
 }
-
+.md-dialog-title {
+  display: flex;
+  justify-content: space-between;
+}
 .start-from-bottom {
   // align-content: flex-end;
   padding-top: 21px;
@@ -605,7 +706,12 @@ h3 {
   max-width: calc(100vw - 125px);
   background-color: #292b42 !important;
 }
-
+.md-dialog-title-left {
+  margin-right: 2em;
+}
+.md-dialog-title-right {
+  margin-left: 2em;
+}
 .md-content {
   padding: 16px;
 }
@@ -746,6 +852,13 @@ h3 {
   .start-from-bottom {
     // align-content: flex-end;
     padding-top: 0;
+  }
+  .md-dialog-title {
+    flex-direction: column;
+  }
+  .md-dialog-title-right {
+    margin-left: 0;
+    margin-top: 1em;
   }
 }
 </style>
