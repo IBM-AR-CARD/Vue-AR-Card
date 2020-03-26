@@ -311,8 +311,13 @@
                 </md-dialog-title>
                 <md-divider></md-divider>
                 <md-content v-if="dialogUser">
-                  <label class="md-body-2">Gender:</label>
-                  <p v-if="">Known</p>
+                  <label class="md-body-2">Gender: </label>
+                  <span v-if="dialogUser.gender == 0">Male</span>
+                  <span v-if="dialogUser.gender == 1">Female</span>
+                  <span v-if="dialogUser.gender == 2">Perfer not to say</span>
+                </md-content>
+                <md-content v-if="dialogUser">
+                  <label class="md-body-2">Model: </label>{{ dialogUser.model }}
                 </md-content>
                 <md-content v-if="dialogUser && dialogUser.email">
                   <span class="md-body-2">Email:</span> {{ dialogUser.email }}
@@ -349,13 +354,40 @@
                 </md-content>
                 <md-dialog-actions>
                   <md-button
+                    v-if="dialogUser && !dialogUser.isFav"
+                    class="md-icon-button"
+                    @click="onFavourite(dialogUser, dialogUser._id)"
+                  >
+                    <md-icon>favorite_border</md-icon>
+                  </md-button>
+                  <md-button
+                    v-if="dialogUser && dialogUser.isFav"
+                    class="md-icon-button"
+                    @click="onNotFavourite(dialogUser, dialogUser._id)"
+                  >
+                    <md-icon>favorite</md-icon>
+                  </md-button>
+                  <md-button
+                    class="md-icon-button"
+                    @click="showDeleteDialog(dialogUser._id)"
+                  >
+                    <md-icon>delete</md-icon>
+                  </md-button>
+                  <md-button
                     class="md-primary"
                     @click="showDetailDialog = false"
-                    >Close</md-button
-                  >
+                    >Close
+                  </md-button>
                 </md-dialog-actions>
               </md-dialog-content>
             </md-dialog>
+            <md-dialog-confirm
+              :md-active.sync="confirmDeleteUser"
+              md-title="'Do you whant to delete this user?'"
+              md-confirm-text="Agree"
+              md-cancel-text="Disagree"
+              @md-confirm="onConfirmDelete"
+            />
             <md-card
               class="card"
               v-for="item in historyList"
@@ -375,17 +407,35 @@
                 </md-card-header>
               </div>
               <md-card-actions>
-                <md-button class="md-icon-button">
-                  <md-icon v-if="item.isFav">favorite</md-icon>
-                  <md-icon v-if="!item.isFav">favorite_border</md-icon>
+                <md-button
+                  class="md-icon-button"
+                  v-if="item.isFav"
+                  @click="onNotFavourite(item, item.userid)"
+                >
+                  <md-icon>favorite</md-icon>
                 </md-button>
-
-                <md-button class="md-icon-button">
+                <md-button
+                  class="md-icon-button"
+                  v-if="!item.isFav"
+                  @click="onFavourite(item, item.userid)"
+                >
+                  <md-icon>favorite_border</md-icon>
+                </md-button>
+                <md-button
+                  class="md-icon-button"
+                  @click="showDeleteDialog(item.userid)"
+                >
                   <md-icon>delete</md-icon>
                 </md-button>
               </md-card-actions>
             </md-card>
           </div>
+          <md-snackbar
+            :md-duration="4000"
+            :md-active.sync="showHistorySnackbar"
+          >
+            <span>{{ historySnackbarMessage }}</span>
+          </md-snackbar>
         </div>
       </md-app-content>
     </md-app>
@@ -423,7 +473,12 @@ export default {
     showSaveSnackbar: false,
     historyList: null,
     favouriteList: null,
-    showDetailDialog: false
+    showDetailDialog: false,
+    onRequest: false,
+    showHistorySnackbar: false,
+    historySnackbarMessage: "",
+    confirmDeleteUser: false,
+    onDeleteUserID: null
   }),
   created: async function() {
     await this.getProfileData();
@@ -573,8 +628,149 @@ export default {
       );
       setTimeout(() => {
         this.dialogUser = response.data;
+        this.dialogUser.isFav = user.isFav;
       }, 1000);
       console.log(response.data);
+    },
+    async onFavourite(user, id) {
+      console.log("favourite");
+      console.log(id);
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/favorite/add",
+          {
+            userid: id
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
+          }
+        );
+        console.log(response);
+        if (response.status == 200) {
+          this.historySnackbarMessage = "success add to favourite";
+          this.showHistorySnackbar = true;
+          if (this.dialogUser) {
+            this.dialogUser.isFav = true;
+          }
+          this.historyList.map((item, index) => {
+            if (item.userid) {
+              if (item.userid == id) {
+                this.historyList[index].isFav = true;
+              }
+            } else {
+              if (item._id == id) {
+                this.historyList[index].isFav = true;
+              }
+            }
+          });
+        } else {
+          this.historySnackbarMessage = "fail to add to favourite";
+          this.showHistorySnackbar = true;
+        }
+      } catch (error) {
+        this.historySnackbarMessage = "fail to add to favourite";
+        this.showHistorySnackbar = true;
+        console.error(error);
+      }
+    },
+    async onNotFavourite(user, id) {
+      console.log("not favourite");
+      console.log(id);
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/favorite/remove",
+          {
+            userid: id
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
+          }
+        );
+        console.log(response);
+        if (response.status == 200) {
+          this.historySnackbarMessage = "success remove from favourite";
+          this.showHistorySnackbar = true;
+          if (this.dialogUser) {
+            this.dialogUser.isFav = false;
+          }
+          this.historyList.map((item, index) => {
+            if (item.userid) {
+              if (item.userid == id) {
+                this.historyList[index].isFav = false;
+              }
+            } else {
+              if (item._id == id) {
+                this.historyList[index].isFav = false;
+              }
+            }
+          });
+        } else {
+          this.historySnackbarMessage = "fail to remove from favourite";
+          this.showHistorySnackbar = true;
+        }
+      } catch (error) {
+        this.historySnackbarMessage = "fail to remove from favourite";
+        this.showHistorySnackbar = true;
+        console.error(error);
+      }
+    },
+    showDeleteDialog(id) {
+      console.log(id);
+
+      this.onDeleteUserID = id;
+      this.confirmDeleteUser = true;
+    },
+    async onConfirmDelete() {
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/history/remove",
+          {
+            userid: this.onDeleteUserID
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
+          }
+        );
+        if (response.status == 200) {
+          console.log(response);
+
+          let removeIndex = -1;
+          for (let item of this.historyList) {
+            if (item.userid == this.onDeleteUserID) {
+              removeIndex = this.historyList.indexOf(item);
+            }
+          }
+
+          if (removeIndex != -1) {
+            this.historyList.splice(removeIndex, 1);
+            this.showDetailDialog = false;
+            this.historySnackbarMessage = "success delete this user";
+            this.showHistorySnackbar = true;
+          } else {
+            this.historySnackbarMessage = "fail to delete this user";
+            this.showHistorySnackbar = true;
+          }
+        } else {
+          this.historySnackbarMessage = "fail to delete this user";
+          this.showHistorySnackbar = true;
+        }
+        this.onDeleteUserID = null;
+      } catch (error) {
+        this.onDeleteUserID = null;
+        console.log(error);
+
+        this.historySnackbarMessage = "fail to delete this user";
+        this.showHistorySnackbar = true;
+      }
+    },
+    async onCancelDelete() {
+      this.onDeleteUserID = null;
     }
   }
 };
