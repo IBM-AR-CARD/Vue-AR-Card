@@ -58,19 +58,6 @@
       </md-app-drawer>
       <!-- <div class="card-container"> -->
       <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
-        <div v-if="state == 'history'" class="card-container">
-          <md-card class="card" v-for="index in [1,2,3,4,5]" v-bind:key="index">
-            <md-card-header>
-              <div class="md-title">Card without hover effect</div>
-            </md-card-header>
-            <md-card-content>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.</md-card-content>
-
-            <md-card-actions>
-              <md-button>Action</md-button>
-              <md-button>Action</md-button>
-            </md-card-actions>
-          </md-card>
-        </div>
         <div v-if="state == 'profile'">
           <md-card class="card-container-profile">
             <md-card-header>
@@ -207,6 +194,91 @@
             </md-card-actions>
           </md-card>
         </div>
+        <div v-if="state == 'history'">
+          <div v-if="!historyList" class="card-container">
+            <md-card
+              class="card"
+              v-for="index in Array.from({length: 9}, (x,i) => i)"
+              v-bind:key="index"
+            >
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-actions>
+                <md-button class="md-icon-button">
+                  <md-icon>favorite</md-icon>
+                </md-button>
+
+                <md-button class="md-icon-button">
+                  <md-icon>delete</md-icon>
+                </md-button>
+              </md-card-actions>
+            </md-card>
+          </div>
+          <div v-if="historyList" class="card-container">
+            <md-dialog :md-active.sync="showDetailDialog">
+              <md-tabs md-dynamic-height>
+                <md-tab md-label="General">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
+
+                <md-tab md-label="Activity">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
+
+                <md-tab md-label="Account">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
+              </md-tabs>
+
+              <md-dialog-actions>
+                <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+                <md-button class="md-primary" @click="showDialog = false">Save</md-button>
+              </md-dialog-actions>
+            </md-dialog>
+            <md-card
+              class="card"
+              v-for="(index,item) in historyList"
+              v-bind:key="item"
+              md-with-hover
+            >
+              <div @click="showUserDetail">
+                <md-card-header>
+                  <h1 class="card-header">{{item}}</h1>
+                </md-card-header>
+                <md-card-content>
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-card-content>
+                <md-card-content>
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-card-content>
+              </div>
+              <md-card-actions>
+                <md-button class="md-icon-button">
+                  <md-icon>favorite</md-icon>
+                </md-button>
+
+                <md-button class="md-icon-button">
+                  <md-icon>delete</md-icon>
+                </md-button>
+              </md-card-actions>
+            </md-card>
+          </div>
+        </div>
+
         <md-snackbar
           :md-duration="isInfinity ? Infinity : 4000"
           :md-active.sync="showSnackbar"
@@ -258,7 +330,10 @@ export default {
     isInfinity: false,
     onEditName: false,
     updateProfileSuccess: true,
-    showSaveSnackbar: false
+    showSaveSnackbar: false,
+    historyList: null,
+    favouriteList: null,
+    showDetailDialog: false
   }),
   created: async function() {
     await this.getProfileData();
@@ -267,10 +342,12 @@ export default {
     toProfile() {
       this.showNavigation = false;
       this.state = "profile";
+      this.historyList = null;
     },
     toHistory() {
       this.showNavigation = false;
       this.state = "history";
+      this.fetchHistoryList();
     },
     logOut() {
       // this.$cookies.delete("_id");
@@ -386,6 +463,21 @@ export default {
         this.updateProfileSuccess = false;
         this.showSaveSnackbar = true;
       }
+    },
+    async fetchHistoryList() {
+      let response = await this.$http.get(
+        this.$globalConfig.baseUrl + "/history/get",
+        {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token")
+          }
+        }
+      );
+      this.historyList = response.data.list;
+      console.log(this.historyList);
+    },
+    showUserDetail() {
+      this.showDetailDialog = true;
     }
   }
 };
@@ -414,6 +506,11 @@ h3 {
   font-size: 1.5rem;
   margin-right: 15%;
   color: #43425d;
+}
+.card-header {
+  line-height: 1rem;
+  margin-bottom: 0.3em;
+  margin-top: 0;
 }
 .top-detail-container {
   display: flex;
