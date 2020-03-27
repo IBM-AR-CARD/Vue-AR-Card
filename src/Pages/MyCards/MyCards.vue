@@ -40,7 +40,11 @@
             <span class="md-list-item-text nav-list-item-text">Scan history</span>
           </md-list-item>
 
-          <md-list-item class="nav-list-item">
+          <md-list-item
+            class="nav-list-item"
+            v-on:click="toFavourite()"
+            v-bind:class="{ 'nav-list-item-onselect': state == 'favourite' }"
+          >
             <md-icon color="white" class="nav-list-icon">star_outline</md-icon>
             <span class="md-list-item-text nav-list-item-text">Favourite</span>
           </md-list-item>
@@ -327,14 +331,14 @@
                   <md-button
                     v-if="dialogUser && !dialogUser.isFav"
                     class="md-icon-button"
-                    @click="onFavourite(dialogUser, dialogUser._id)"
+                    @click="onFavourite_History(dialogUser, dialogUser._id)"
                   >
                     <md-icon>favorite_border</md-icon>
                   </md-button>
                   <md-button
                     v-if="dialogUser && dialogUser.isFav"
                     class="md-icon-button"
-                    @click="onNotFavourite(dialogUser, dialogUser._id)"
+                    @click="onNotFavourite_History(dialogUser, dialogUser._id)"
                   >
                     <md-icon>favorite</md-icon>
                   </md-button>
@@ -406,7 +410,7 @@
               >{{index}}</a>
             </div>
           </div>
-          <md-snackbar :md-duration="4000" :md-active.sync="showHistorySnackbar">
+          <md-snackbar :md-duration="1000" :md-active.sync="showHistorySnackbar">
             <span>{{ historySnackbarMessage }}</span>
           </md-snackbar>
         </div>
@@ -512,14 +516,14 @@
                   <md-button
                     v-if="dialogUser && !dialogUser.isFav"
                     class="md-icon-button"
-                    @click="onFavourite(dialogUser, dialogUser._id)"
+                    @click="onFavourite_Favourite(dialogUser, dialogUser._id)"
                   >
                     <md-icon>favorite_border</md-icon>
                   </md-button>
                   <md-button
                     v-if="dialogUser && dialogUser.isFav"
                     class="md-icon-button"
-                    @click="onNotFavourite(dialogUser, dialogUser._id)"
+                    @click="onNotFavourite_Favourite(dialogUser, dialogUser._id)"
                   >
                     <md-icon>favorite</md-icon>
                   </md-button>
@@ -546,7 +550,7 @@
             </div>
             <md-card
               class="card"
-              v-for="item in (favouriteDisplayList.slice(favouritePageNumber*cards_per_page,(favouritePageNumber*cards_per_page+cards_per_page)>=favouriteDisplayList.length?favouriteDisplayList.length:favouritePageNumber*cards_per_page+cards_per_page))"
+              v-for="item in (favouriteDisplayList.slice(favouritePageNumber*cards_per_page,(favouritePageNumber*cards_per_page+cards_per_page)>=favouriteList.length?favouriteList.length:favouritePageNumber*cards_per_page+cards_per_page))"
               v-bind:key="item._id"
               md-with-hover
             >
@@ -577,7 +581,7 @@
                 >
                   <md-icon>favorite_border</md-icon>
                 </md-button>
-                <md-button class="md-icon-button" @click="showDeleteDialog_History(item.userid)">
+                <md-button class="md-icon-button" @click="showDeleteDialog_Favourite(item.userid)">
                   <md-icon>delete</md-icon>
                 </md-button>
               </md-card-actions>
@@ -591,7 +595,7 @@
               >{{index}}</a>
             </div>
           </div>
-          <md-snackbar :md-duration="4000" :md-active.sync="showFavouriteSnackbar">
+          <md-snackbar :md-duration="1000" :md-active.sync="showFavouriteSnackbar">
             <span>{{ favouriteSnackbarMessage }}</span>
           </md-snackbar>
         </div>
@@ -652,33 +656,60 @@ export default {
     favouritePageNumber: 0,
     favouritePageMaximum: 0,
     searchText_Favourite: "",
-    searching_Favourite: false,
+    searching_Favourite: false
   }),
   created: async function() {
     await this.getProfileData();
+    this.fetchFavouriteList();
+    this.fetchHistoryList();
   },
   methods: {
+    distoryHistory() {
+      this.historyList = null;
+      this.showDetailDialog = false;
+      this.onRequest = false;
+      this.showHistorySnackbar = false;
+      this.historySnackbarMessage = "";
+      this.confirmDeleteUser_History = false;
+      this.onDeleteUserID = null;
+      this.historyDisplayList = null;
+      this.historyPageNumber = 0;
+      this.historyPageMaximum = 0;
+      this.searchText_History = "";
+      this.searching_History = false;
+    },
+    destoryFavourite() {
+      this.favouriteList = null;
+      this.favouriteDisplayList = null;
+      this.showFavouriteSnackbar = false;
+      this.favouriteSnackbarMessage = "";
+      this.confirmDeleteUser_Favourite = false;
+      this.favouritePageNumber = 0;
+      this.favouritePageMaximum = 0;
+      this.searchText_Favourite = "";
+      this.searching_Favourite = false;
+    },
     toProfile() {
+      console.log("toProfile");
       this.showNavigation = false;
       this.state = "profile";
-      this.historyList = null;
+      this.fetchFavouriteList();
+      this.fetchHistoryList();
+      this.searchText_Favourite = "";
+      this.searchText_History = "";
+      // this.historyList = null;
     },
     toHistory() {
+      console.log("to history");
       this.showNavigation = false;
       this.state = "history";
-      this.fetchHistoryList();
     },
-    toFavourite(){
+    toFavourite() {
+      console.log("to favourite");
       this.showNavigation = false;
-      this.state = "history";
-      this.fetchFavouriteList();
-    }
+      this.state = "favourite";
+    },
     logOut() {
-      // this.$cookies.delete("_id");
-      // this.$cookies.delete("token");
-      // this.$cookies.delete("password");
-      // this.$cookies.delete("email");
-      // this.$cookies.delete("remember");
       console.log(this.$cookies);
       this.$cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
       this.toLogin();
@@ -770,7 +801,7 @@ export default {
           model: this.model
         };
         console.log(parseObject);
-        let response = await this.$http.post(
+        await this.$http.post(
           this.$globalConfig.baseUrl + "/profile/update",
           parseObject,
           {
@@ -781,7 +812,6 @@ export default {
         );
         this.updateProfileSuccess = true;
         this.showSaveSnackbar = true;
-        console.log(response);
       } catch (error) {
         this.updateProfileSuccess = false;
         this.showSaveSnackbar = true;
@@ -798,7 +828,7 @@ export default {
       );
       this.historyList = response.data.list;
       this.historyDisplayList = response.data.list;
-      let maximumNumber = this.historyDisplayList.length / this.cards_per_page;
+      let maximumNumber = this.historyList.length / this.cards_per_page;
       if (Math.floor(maximumNumber) < maximumNumber) {
         this.historyPageMaximum = Math.floor(maximumNumber) + 1;
       } else {
@@ -850,6 +880,7 @@ export default {
               }
             }
           });
+          this.addIntoFavourite(id);
         } else {
           this.historySnackbarMessage = "fail to add to favourite";
           this.showHistorySnackbar = true;
@@ -875,7 +906,6 @@ export default {
             }
           }
         );
-        console.log(response);
         if (response.status == 200) {
           this.historySnackbarMessage = "success remove from favourite";
           this.showHistorySnackbar = true;
@@ -893,6 +923,8 @@ export default {
               }
             }
           });
+          console.log(response);
+          this.deleteFromFavourite(id);
         } else {
           this.historySnackbarMessage = "fail to remove from favourite";
           this.showHistorySnackbar = true;
@@ -909,6 +941,30 @@ export default {
       this.onDeleteUserID = id;
       this.confirmDeleteUser_History = true;
     },
+    deleteFromHistory(userid) {
+      let removeIndex = -1;
+      let removeDisplayIndex = -1;
+      for (let item of this.historyList) {
+        if (item.userid == userid) {
+          removeIndex = this.historyList.indexOf(item);
+        }
+      }
+      for (let item of this.historyDisplayList) {
+        if (item.userid == userid) {
+          removeDisplayIndex = this.historyList.indexOf(item);
+        }
+      }
+      if (removeIndex != -1) {
+        this.historyList.splice(removeIndex, 1);
+        this.historyDisplayList.splice(removeDisplayIndex, 1);
+        this.showDetailDialog = false;
+        this.historySnackbarMessage = "success delete this user";
+        this.showHistorySnackbar = true;
+      } else {
+        this.historySnackbarMessage = "fail to delete this user";
+        this.showHistorySnackbar = true;
+      }
+    },
     async onConfirmDelete_History() {
       try {
         let response = await this.$http.post(
@@ -924,30 +980,8 @@ export default {
         );
         if (response.status == 200) {
           console.log(response);
-
-          let removeIndex = -1;
-          let removeDisplayIndex = -1;
-          for (let item of this.historyList) {
-            if (item.userid == this.onDeleteUserID) {
-              removeIndex = this.historyList.indexOf(item);
-            }
-          }
-          for (let item of this.historyDisplayList) {
-            if (item.userid == this.onDeleteUserID) {
-              removeDisplayIndex = this.historyList.indexOf(item);
-            }
-          }
-          if (removeIndex != -1) {
-
-            this.historyList.splice(removeIndex, 1);
-            this.historyDisplayList.splice(removeDisplayIndex,1)
-            this.showDetailDialog = false;
-            this.historySnackbarMessage = "success delete this user";
-            this.showHistorySnackbar = true;
-          } else {
-            this.historySnackbarMessage = "fail to delete this user";
-            this.showHistorySnackbar = true;
-          }
+          this.deleteFromHistory(this.onDeleteUserID);
+          this.deleteFromFavourite(this.onDeleteUserID);
         } else {
           this.historySnackbarMessage = "fail to delete this user";
           this.showHistorySnackbar = true;
@@ -986,11 +1020,10 @@ export default {
         }
         return false;
       });
-      console.log(this.historyDisplayList);
 
       this.searching_History = false;
     },
-    async fetchFavouriteList(){
+    async fetchFavouriteList() {
       let response = await this.$http.get(
         this.$globalConfig.baseUrl + "/favorite/get",
         {
@@ -999,13 +1032,14 @@ export default {
           }
         }
       );
+      console.log(response);
       this.favouriteList = response.data.list;
       this.favouriteDisplayList = response.data.list;
-      let maximumNumber = this.favouriteDisplayList.length / this.cards_per_page;
+      let maximumNumber = this.favouriteList.length / this.cards_per_page;
       if (Math.floor(maximumNumber) < maximumNumber) {
-        this.favouritePageNumber = Math.floor(maximumNumber) + 1;
+        this.favouritePageMaximum = Math.floor(maximumNumber) + 1;
       } else {
-        this.favouritePageNumber = Math.floor(maximumNumber);
+        this.favouritePageMaximum = Math.floor(maximumNumber);
       }
     },
     async showUserDetail_Favourite(user) {
@@ -1020,7 +1054,46 @@ export default {
       }, 1000);
       console.log(response.data);
     },
-async onNotFavourite_Favourite(user, id) {
+    deleteFromFavourite(userid) {
+      let removeIndex = -1;
+      let removeDisplayIndex = -1;
+      for (let item of this.favouriteList) {
+        console.log(item.userid + userid);
+
+        if (item.userid == userid) {
+          removeIndex = this.favouriteList.indexOf(item);
+        }
+      }
+      for (let item of this.favouriteDisplayList) {
+        if (item.userid == userid) {
+          removeDisplayIndex = this.favouriteDisplayList.indexOf(item);
+        }
+      }
+      if (removeIndex != -1) {
+        this.favouriteList.splice(removeIndex, 1);
+        if (removeDisplayIndex != -1) {
+          this.favouriteDisplayList.splice(removeDisplayIndex, 1);
+        }
+        this.showDetailDialog = false;
+        this.favouriteSnackbarMessage = "success remove from favourite";
+        this.showFavouriteSnackbar = true;
+      } else {
+        console.log("removeIndex == -1");
+
+        this.favouriteSnackbarMessage = "fail to remove from favourite";
+        this.showFavouriteSnackbar = true;
+      }
+    },
+    addIntoFavourite(userid) {
+      for (let item of this.historyList) {
+        if (item.userid == userid) {
+          this.favouriteList.push(item);
+        }
+      }
+
+      this.searchOnChange_Favourite();
+    },
+    async onNotFavourite_Favourite(user, id) {
       console.log("not favourite");
       console.log(id);
       try {
@@ -1035,40 +1108,82 @@ async onNotFavourite_Favourite(user, id) {
             }
           }
         );
-        console.log(response);
         if (response.status == 200) {
-          let removeIndex = -1;
-          let removeDisplayIndex = -1;
-          for (let item of this.favouriteList) {
-            if (item.userid == this.onDeleteUserID) {
-              removeIndex = this.historyList.indexOf(item);
-            }
-          }
-          for (let item of this.favouriteDisplayList) {
-            if (item.userid == this.onDeleteUserID) {
-              removeDisplayIndex = this.favouriteDisplayList.indexOf(item);
-            }
-          }
-          if(removeIndex!= -1){
-            this.favouriteList.splice(removeIndex, 1);
-            if(removeDisplayIndex!=-1){
-              this.favouriteDisplayList.splice(removeDisplayIndex,1)
-            }
-            
-            this.showDetailDialog = false;
-            this.favouriteSnackbarMessage = "success remove from favourite";
-            this.showFavouriteSnackbar = true;
-          }
-          
+          this.deleteFromFavourite(id);
         } else {
-          this.historySnackbarMessage = "fail to remove from favourite";
-          this.showHistorySnackbar = true;
+          console.log("response != 200");
+
+          this.favouriteSnackbarMessage = "fail to remove from favourite";
+          this.showFavouriteSnackbar = true;
         }
       } catch (error) {
-        this.historySnackbarMessage = "fail to remove from favourite";
-        this.showHistorySnackbar = true;
+        this.favouriteSnackbarMessage = "fail to remove from favourite";
+        this.showFavouriteSnackbar = true;
         console.error(error);
       }
+    },
+    async onConfirmDelete_Favourite() {
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/history/remove",
+          {
+            userid: this.onDeleteUserID
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
+          }
+        );
+        if (response.status == 200) {
+          console.log(response);
+
+          this.deleteFromHistory(this.onDeleteUserID);
+          this.deleteFromFavourite(this.onDeleteUserID);
+        } else {
+          this.favouriteSnackbarMessage = "fail to delete this user";
+          this.showFavouriteSnackbar = true;
+        }
+        this.onDeleteUserID = null;
+      } catch (error) {
+        this.onDeleteUserID = null;
+        console.log(error);
+
+        this.favouriteSnackbarMessage = "fail to delete this user";
+        this.showFavouriteSnackbar = true;
+      }
+    },
+    showDeleteDialog_Favourite(id) {
+      console.log(id);
+
+      this.onDeleteUserID = id;
+      this.confirmDeleteUser_Favourite = true;
+    },
+    searchOnChange_Favourite() {
+      if (this.searching_Favourite) {
+        return;
+      }
+      this.searching_Favourite = true;
+      this.favouritePageNumber = 0;
+      let searchString = this.searchText_Favourite.toLowerCase();
+      this.favouriteDisplayList = this.favouriteList.filter(user => {
+        if (this.searchText_Favourite == "") {
+          return true;
+        }
+        if (user.name.toLowerCase().match(searchString)) {
+          return true;
+        }
+        if (user.userid.toLowerCase().match(searchString)) {
+          return true;
+        }
+        if (user.username.toLowerCase().match(searchString)) {
+          return true;
+        }
+        return false;
+      });
+
+      this.searching_Favourite = false;
+    }
   }
 };
 </script>
