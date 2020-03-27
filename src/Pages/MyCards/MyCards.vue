@@ -1,41 +1,22 @@
 <template>
   <div class="page-container">
-    <md-app
-      md-waterfall
-      md-mode="fixed"
-      style="background-color: #F0F0F7 !important;"
-    >
+    <md-app md-waterfall md-mode="fixed" style="background-color: #F0F0F7 !important;">
       <md-app-toolbar class="md-primary">
-        <md-button
-          class="md-icon-button nav-left-menu-button"
-          @click="showNavigation = true"
-        >
+        <md-button class="md-icon-button nav-left-menu-button" @click="showNavigation = true">
           <md-icon>menu</md-icon>
         </md-button>
         <!-- <span class="md-title">IBM AR BUSINESS CARD</span> -->
 
         <div class="md-toolbar-section-end">
-          <span class="toolbar-toprght-name"
-            >{{ firstname }} {{ lastname }}</span
-          >
-          <img
-            class="toolbar-toprght-icon"
-            v-if="profile"
-            v-bind:src="profile"
-          />
+          <span class="toolbar-toprght-name">{{ firstname }} {{ lastname }}</span>
+          <img class="toolbar-toprght-icon" v-if="profile" v-bind:src="profile" />
           <div>
-            <md-icon class="toolbar-toprght-icon" v-if="!profile"
-              >person</md-icon
-            >
+            <md-icon class="toolbar-toprght-icon" v-if="!profile">person</md-icon>
           </div>
         </div>
       </md-app-toolbar>
 
-      <md-app-drawer
-        :md-active.sync="showNavigation"
-        md-swipeable
-        md-permanent="full"
-      >
+      <md-app-drawer :md-active.sync="showNavigation" md-swipeable md-permanent="full">
         <md-toolbar class="md-transparent" md-elevation="0">
           <span class="md-title nav-title">IBM AR CARD</span>
         </md-toolbar>
@@ -56,9 +37,7 @@
             class="nav-list-item"
           >
             <md-icon color="white" class="nav-list-icon">history</md-icon>
-            <span class="md-list-item-text nav-list-item-text"
-              >Scan history</span
-            >
+            <span class="md-list-item-text nav-list-item-text">Scan history</span>
           </md-list-item>
 
           <md-list-item class="nav-list-item">
@@ -78,10 +57,7 @@
         </md-button>-->
       </md-app-drawer>
       <!-- <div class="card-container"> -->
-      <md-app-content
-        class="md-scrollbar"
-        style="background-color: #F0F0F7 !important;"
-      >
+      <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
         <div v-if="state == 'profile'">
           <md-card class="card-container-profile">
             <md-card-header>
@@ -168,8 +144,7 @@
                         v-for="item in $globalData.modalList"
                         v-bind:key="item"
                         v-bind:value="item"
-                        >{{ item }}</md-option
-                      >
+                      >{{ item }}</md-option>
                     </md-select>
                   </md-field>
                 </md-card-content>
@@ -214,14 +189,8 @@
               </md-field>
             </md-card-content>
             <md-card-actions>
-              <md-button @click="profileUpdate()" class="md-raised md-primary"
-                >Done</md-button
-              >
-              <md-button
-                @click="getProfileData()"
-                class="md-raised card-action-cancel"
-                >Cancel</md-button
-              >
+              <md-button @click="profileUpdate()" class="md-raised md-primary">Done</md-button>
+              <md-button @click="getProfileData()" class="md-raised card-action-cancel">Cancel</md-button>
             </md-card-actions>
           </md-card>
           <md-snackbar
@@ -229,29 +198,31 @@
             :md-active.sync="showSnackbar"
             md-persistent
           >
-            <span>{{
+            <span>
+              {{
               isInfinity
-                ? "You haven't login, Please login"
-                : "Connection timeout. please retry!"
-            }}</span>
+              ? "You haven't login, Please login"
+              : "Connection timeout. please retry!"
+              }}
+            </span>
             <md-button
               class="retry-button"
               @click="isInfinity ? toLogin() : onRetry()"
-              >{{ isInfinity ? "Login" : "Retry" }}</md-button
-            >
+            >{{ isInfinity ? "Login" : "Retry" }}</md-button>
           </md-snackbar>
           <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
-            <span>{{
+            <span>
+              {{
               updateProfileSuccess
-                ? "You have successful update you profile"
-                : "Connection timeout. please retry!"
-            }}</span>
+              ? "You have successful update you profile"
+              : "Connection timeout. please retry!"
+              }}
+            </span>
             <md-button
               class="retry-button"
               @click="profileUpdate()"
               v-if="!updateProfileSuccess"
-              >Retry</md-button
-            >
+            >Retry</md-button>
           </md-snackbar>
         </div>
         <div v-if="state == 'history'">
@@ -294,9 +265,7 @@
               <md-dialog-content class="md-scrollbar">
                 <md-dialog-title v-if="dialogUser">
                   <div class="md-dialog-title-left" v-if="dialogUser">
-                    <div class="md-title">
-                      {{ dialogUser.firstname }} {{ dialogUser.lastname }}
-                    </div>
+                    <div class="md-title">{{ dialogUser.firstname }} {{ dialogUser.lastname }}</div>
                     <div class="md-subhead">@{{ dialogUser.username }}</div>
                   </div>
                   <img
@@ -304,32 +273,34 @@
                     class="profile-image md-dialog-title-right"
                     v-bind:src="dialogUser.profile"
                   />
-                  <md-progress-bar
-                    v-if="!dialogUser"
-                    md-mode="indeterminate"
-                  ></md-progress-bar>
+                  <md-progress-bar v-if="!dialogUser" md-mode="indeterminate"></md-progress-bar>
                 </md-dialog-title>
                 <md-divider></md-divider>
                 <md-content v-if="dialogUser">
-                  <label class="md-body-2">Gender: </label>
+                  <label class="md-body-2">Gender:</label>
                   <span v-if="dialogUser.gender == 0">Male</span>
                   <span v-if="dialogUser.gender == 1">Female</span>
                   <span v-if="dialogUser.gender == 2">Perfer not to say</span>
                 </md-content>
                 <md-content v-if="dialogUser">
-                  <label class="md-body-2">Model: </label>{{ dialogUser.model }}
+                  <label class="md-body-2">Model:</label>
+                  {{ dialogUser.model }}
                 </md-content>
                 <md-content v-if="dialogUser && dialogUser.email">
-                  <span class="md-body-2">Email:</span> {{ dialogUser.email }}
+                  <span class="md-body-2">Email:</span>
+                  {{ dialogUser.email }}
                 </md-content>
                 <md-content v-if="dialogUser && dialogUser.website">
                   <span class="md-body-2">Website:</span>
-                  <a v-bind:href="dialogUser.website">{{
+                  <a v-bind:href="dialogUser.website">
+                    {{
                     dialogUser.website
-                  }}</a>
+                    }}
+                  </a>
                 </md-content>
                 <md-content v-if="dialogUser && dialogUser.phone">
-                  <span class="md-body-2">Phone:</span> {{ dialogUser.phone }}
+                  <span class="md-body-2">Phone:</span>
+                  {{ dialogUser.phone }}
                 </md-content>
                 <md-content v-if="dialogUser && dialogUser.description != ''">
                   <label class="md-body-2">Description:</label>
@@ -367,34 +338,34 @@
                   >
                     <md-icon>favorite</md-icon>
                   </md-button>
-                  <md-button
-                    class="md-icon-button"
-                    @click="showDeleteDialog(dialogUser._id)"
-                  >
+                  <md-button class="md-icon-button" @click="showDeleteDialog(dialogUser._id)">
                     <md-icon>delete</md-icon>
                   </md-button>
-                  <md-button
-                    class="md-primary"
-                    @click="showDetailDialog = false"
-                    >Close
-                  </md-button>
+                  <md-button class="md-primary" @click="showDetailDialog = false">Close</md-button>
                 </md-dialog-actions>
               </md-dialog-content>
             </md-dialog>
             <md-dialog-confirm
-              :md-active.sync="confirmDeleteUser"
+              :md-active.sync="confirmDeleteUser_History"
               md-title="'Do you whant to delete this user?'"
               md-confirm-text="Agree"
               md-cancel-text="Disagree"
-              @md-confirm="onConfirmDelete"
+              @md-confirm="onConfirmDelete_History"
             />
+            <div class="search-field">
+              <md-field>
+                <label>Search</label>
+                <md-input v-model.trim="searchText_History" @input="searchOnChange_History()"></md-input>
+                <md-icon>search</md-icon>
+              </md-field>
+            </div>
             <md-card
               class="card"
-              v-for="item in historyList"
+              v-for="item in (historyDisplayList.slice(historyPageNumber*cards_per_page,(historyPageNumber*cards_per_page+cards_per_page)>=historyDisplayList.length?historyDisplayList.length:historyPageNumber*cards_per_page+cards_per_page))"
               v-bind:key="item._id"
               md-with-hover
             >
-              <div @click="showUserDetail(item)">
+              <div @click="showUserDetail_History(item)">
                 <md-card-header>
                   <md-card-header-text>
                     <div class="md-title">{{ item.name }}</div>
@@ -410,30 +381,32 @@
                 <md-button
                   class="md-icon-button"
                   v-if="item.isFav"
-                  @click="onNotFavourite(item, item.userid)"
+                  @click="onNotFavourite_History(item, item.userid)"
                 >
                   <md-icon>favorite</md-icon>
                 </md-button>
                 <md-button
                   class="md-icon-button"
                   v-if="!item.isFav"
-                  @click="onFavourite(item, item.userid)"
+                  @click="onFavourite_History(item, item.userid)"
                 >
                   <md-icon>favorite_border</md-icon>
                 </md-button>
-                <md-button
-                  class="md-icon-button"
-                  @click="showDeleteDialog(item.userid)"
-                >
+                <md-button class="md-icon-button" @click="showDeleteDialog_History(item.userid)">
                   <md-icon>delete</md-icon>
                 </md-button>
               </md-card-actions>
             </md-card>
+            <div class="page-list-numbers">
+              <a
+                class="page-list-number-each"
+                v-for=" index in Array.from({ length: historyPageMaximum }, (x, i) => i)"
+                v-bind:key="index"
+                @click="historyPageNumber = index"
+              >{{index}}</a>
+            </div>
           </div>
-          <md-snackbar
-            :md-duration="4000"
-            :md-active.sync="showHistorySnackbar"
-          >
+          <md-snackbar :md-duration="4000" :md-active.sync="showHistorySnackbar">
             <span>{{ historySnackbarMessage }}</span>
           </md-snackbar>
         </div>
@@ -477,8 +450,14 @@ export default {
     onRequest: false,
     showHistorySnackbar: false,
     historySnackbarMessage: "",
-    confirmDeleteUser: false,
-    onDeleteUserID: null
+    confirmDeleteUser_History: false,
+    onDeleteUserID: null,
+    historyDisplayList: null,
+    historyPageNumber: 0,
+    historyPageMaximum: 0,
+    searchText_History: "",
+    searching_History: false,
+    cards_per_page: 9
   }),
   created: async function() {
     await this.getProfileData();
@@ -501,7 +480,6 @@ export default {
       // this.$cookies.delete("email");
       // this.$cookies.delete("remember");
       console.log(this.$cookies);
-
       this.$cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
       this.toLogin();
     },
@@ -619,8 +597,15 @@ export default {
         }
       );
       this.historyList = response.data.list;
+      this.historyDisplayList = response.data.list;
+      let maximumNumber = this.historyDisplayList.length / this.cards_per_page;
+      if (Math.floor(maximumNumber) < maximumNumber) {
+        this.historyPageMaximum = Math.floor(maximumNumber) + 1;
+      } else {
+        this.historyPageMaximum = Math.floor(maximumNumber);
+      }
     },
-    async showUserDetail(user) {
+    async showUserDetail_History(user) {
       let id = user.userid;
       this.showDetailDialog = true;
       let response = await this.$http.post(
@@ -632,7 +617,7 @@ export default {
       }, 1000);
       console.log(response.data);
     },
-    async onFavourite(user, id) {
+    async onFavourite_History(user, id) {
       console.log("favourite");
       console.log(id);
       try {
@@ -675,7 +660,7 @@ export default {
         console.error(error);
       }
     },
-    async onNotFavourite(user, id) {
+    async onNotFavourite_History(user, id) {
       console.log("not favourite");
       console.log(id);
       try {
@@ -718,13 +703,13 @@ export default {
         console.error(error);
       }
     },
-    showDeleteDialog(id) {
+    showDeleteDialog_History(id) {
       console.log(id);
 
       this.onDeleteUserID = id;
-      this.confirmDeleteUser = true;
+      this.confirmDeleteUser_History = true;
     },
-    async onConfirmDelete() {
+    async onConfirmDelete_History() {
       try {
         let response = await this.$http.post(
           this.$globalConfig.baseUrl + "/history/remove",
@@ -769,8 +754,34 @@ export default {
         this.showHistorySnackbar = true;
       }
     },
-    async onCancelDelete() {
+    async onCancelDelete_History() {
       this.onDeleteUserID = null;
+    },
+    searchOnChange_History() {
+      if (this.searching_History) {
+        return;
+      }
+      this.searching_History = true;
+      this.historyPageNumber = 0;
+      let searchString = this.searchText_History.toLowerCase();
+      this.historyDisplayList = this.historyList.filter(user => {
+        if (this.searchText_History == "") {
+          return true;
+        }
+        if (user.name.toLowerCase().match(searchString)) {
+          return true;
+        }
+        if (user.userid.toLowerCase().match(searchString)) {
+          return true;
+        }
+        if (user.username.toLowerCase().match(searchString)) {
+          return true;
+        }
+        return false;
+      });
+      console.log(this.historyDisplayList);
+
+      this.searching_History = false;
     }
   }
 };
@@ -799,6 +810,18 @@ h3 {
   font-size: 1.5rem;
   margin-right: 15%;
   color: #43425d;
+}
+.page-list-numbers {
+  margin-top: 2em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.page-list-number-each {
+  display: block;
+  background-color: #d9d9df;
+  margin: 0.5em;
+  padding: 0.6em;
 }
 .card-header {
   font-size: 1.5em;
@@ -841,73 +864,6 @@ h3 {
 .content-line {
   display: flex;
 }
-@keyframes fadeInOpacity {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.on-select {
-  width: 100%;
-}
-.md-dialog-title {
-  display: flex;
-  justify-content: space-between;
-}
-.start-from-bottom {
-  // align-content: flex-end;
-  padding-top: 21px;
-}
-.content-field-label {
-  font-weight: bold;
-  font-size: 1.5rem !important;
-  margin-bottom: 1em !important;
-  color: #43425d;
-}
-// .content-field {
-//   padding-top: 0 !important;
-// }
-.profile-image {
-  width: 96px;
-  height: 96px;
-  // clip-path: circle(64px at center);
-  // display: block;
-  vertical-align: text-top;
-}
-.retry-button {
-  color: white !important;
-  font-weight: bold;
-}
-.md-app-content {
-  // height: auto !important;
-  width: 100%;
-  // padding: 0 !important;
-  height: auto !important;
-}
-.card-container-profile {
-  padding: 3em 10%;
-}
-.page-container {
-  height: 100%;
-  overflow: hidden;
-}
-.md-app {
-  // height: 100% !important;
-  height: 100%;
-}
-.md-drawer {
-  width: 230px;
-  max-width: calc(100vw - 125px);
-  background-color: #292b42 !important;
-}
-.md-dialog-title-left {
-  margin-right: 2em;
-}
-.md-dialog-title-right {
-  margin-left: 2em;
-}
 .md-content {
   padding: 16px;
 }
@@ -941,7 +897,9 @@ h3 {
 .nav-list-icon {
   color: white !important;
 }
-
+.search-field {
+  width: 100%;
+}
 .nav-list-icon svg {
   fill: white;
 }
@@ -955,7 +913,7 @@ h3 {
   height: auto;
   display: flex;
   flex-wrap: wrap;
-  padding: 2em;
+  padding: 1em;
   // justify-content: ;
   overflow: auto;
 }
@@ -986,6 +944,65 @@ h3 {
 }
 .col-4 {
   width: 98%;
+}
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.on-select {
+  width: 100%;
+}
+.md-dialog-title {
+  display: flex;
+  justify-content: space-between;
+}
+.start-from-bottom {
+  // align-content: flex-end;
+  padding-top: 21px;
+}
+.content-field-label {
+  font-weight: bold;
+  font-size: 1.5rem !important;
+  margin-bottom: 1em !important;
+  color: #43425d;
+}
+.profile-image {
+  width: 96px;
+  height: 96px;
+  vertical-align: text-top;
+}
+.retry-button {
+  color: white !important;
+  font-weight: bold;
+}
+.md-app-content {
+  width: 100%;
+  height: auto !important;
+}
+.card-container-profile {
+  padding: 3em 10%;
+}
+.page-container {
+  height: 100%;
+  overflow: hidden;
+}
+.md-app {
+  height: 100%;
+}
+.md-drawer {
+  width: 230px;
+  max-width: calc(100vw - 125px);
+  background-color: #292b42 !important;
+}
+.md-dialog-title-left {
+  margin-right: 2em;
+}
+.md-dialog-title-right {
+  margin-left: 2em;
 }
 .card-header-container {
   // display: flex;
