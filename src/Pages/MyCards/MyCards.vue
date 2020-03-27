@@ -410,6 +410,191 @@
             <span>{{ historySnackbarMessage }}</span>
           </md-snackbar>
         </div>
+        <div v-if="state == 'favourite'">
+          <div v-if="!favouriteList" class="card-container">
+            <md-card
+              class="card"
+              v-for="index in Array.from({ length: 9 }, (x, i) => i)"
+              v-bind:key="index"
+            >
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-content>
+                <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+              </md-card-content>
+              <md-card-actions>
+                <md-button class="md-icon-button">
+                  <md-icon>favorite</md-icon>
+                </md-button>
+
+                <md-button class="md-icon-button">
+                  <md-icon>delete</md-icon>
+                </md-button>
+              </md-card-actions>
+            </md-card>
+          </div>
+          <div v-if="favouriteList" class="card-container">
+            <md-dialog
+              :md-active.sync="showDetailDialog"
+              :md-fullscreen="false"
+              @md-closed="
+                () => {
+                  this.dialogUser = null;
+                }
+              "
+            >
+              <md-dialog-content class="md-scrollbar">
+                <md-dialog-title v-if="dialogUser">
+                  <div class="md-dialog-title-left" v-if="dialogUser">
+                    <div class="md-title">{{ dialogUser.firstname }} {{ dialogUser.lastname }}</div>
+                    <div class="md-subhead">@{{ dialogUser.username }}</div>
+                  </div>
+                  <img
+                    v-if="dialogUser"
+                    class="profile-image md-dialog-title-right"
+                    v-bind:src="dialogUser.profile"
+                  />
+                  <md-progress-bar v-if="!dialogUser" md-mode="indeterminate"></md-progress-bar>
+                </md-dialog-title>
+                <md-divider></md-divider>
+                <md-content v-if="dialogUser">
+                  <label class="md-body-2">Gender:</label>
+                  <span v-if="dialogUser.gender == 0">Male</span>
+                  <span v-if="dialogUser.gender == 1">Female</span>
+                  <span v-if="dialogUser.gender == 2">Perfer not to say</span>
+                </md-content>
+                <md-content v-if="dialogUser">
+                  <label class="md-body-2">Model:</label>
+                  {{ dialogUser.model }}
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.email">
+                  <span class="md-body-2">Email:</span>
+                  {{ dialogUser.email }}
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.website">
+                  <span class="md-body-2">Website:</span>
+                  <a v-bind:href="dialogUser.website">
+                    {{
+                    dialogUser.website
+                    }}
+                  </a>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.phone">
+                  <span class="md-body-2">Phone:</span>
+                  {{ dialogUser.phone }}
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.description != ''">
+                  <label class="md-body-2">Description:</label>
+                  <p>{{ dialogUser.description }}</p>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.experience != ''">
+                  <label class="md-body-2">Experience:</label>
+                  <p>{{ dialogUser.experience }}</p>
+                </md-content>
+                <md-content v-if="dialogUser && dialogUser.education != ''">
+                  <label class="md-body-2">Education:</label>
+                  <p>{{ dialogUser.education }}</p>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-content v-if="!dialogUser">
+                  <md-progress-bar md-mode="indeterminate"></md-progress-bar>
+                </md-content>
+                <md-dialog-actions>
+                  <md-button
+                    v-if="dialogUser && !dialogUser.isFav"
+                    class="md-icon-button"
+                    @click="onFavourite(dialogUser, dialogUser._id)"
+                  >
+                    <md-icon>favorite_border</md-icon>
+                  </md-button>
+                  <md-button
+                    v-if="dialogUser && dialogUser.isFav"
+                    class="md-icon-button"
+                    @click="onNotFavourite(dialogUser, dialogUser._id)"
+                  >
+                    <md-icon>favorite</md-icon>
+                  </md-button>
+                  <md-button class="md-icon-button" @click="showDeleteDialog(dialogUser._id)">
+                    <md-icon>delete</md-icon>
+                  </md-button>
+                  <md-button class="md-primary" @click="showDetailDialog = false">Close</md-button>
+                </md-dialog-actions>
+              </md-dialog-content>
+            </md-dialog>
+            <md-dialog-confirm
+              :md-active.sync="confirmDeleteUser_Favourite"
+              md-title="'Do you whant to delete this user?'"
+              md-confirm-text="Agree"
+              md-cancel-text="Disagree"
+              @md-confirm="onConfirmDelete_Favourite"
+            />
+            <div class="search-field">
+              <md-field>
+                <label>Search</label>
+                <md-input v-model.trim="searchText_Favourite" @input="searchOnChange_Favourite()"></md-input>
+                <md-icon>search</md-icon>
+              </md-field>
+            </div>
+            <md-card
+              class="card"
+              v-for="item in (favouriteDisplayList.slice(favouritePageNumber*cards_per_page,(favouritePageNumber*cards_per_page+cards_per_page)>=favouriteDisplayList.length?favouriteDisplayList.length:favouritePageNumber*cards_per_page+cards_per_page))"
+              v-bind:key="item._id"
+              md-with-hover
+            >
+              <div @click="showUserDetail_Favourite(item)">
+                <md-card-header>
+                  <md-card-header-text>
+                    <div class="md-title">{{ item.name }}</div>
+                    <div class="md-subhead">@{{ item.username }}</div>
+                  </md-card-header-text>
+
+                  <md-card-media>
+                    <img v-bind:src="item.profile" alt="People" />
+                  </md-card-media>
+                </md-card-header>
+              </div>
+              <md-card-actions>
+                <md-button
+                  class="md-icon-button"
+                  v-if="item.isFav"
+                  @click="onNotFavourite_Favourite(item, item.userid)"
+                >
+                  <md-icon>favorite</md-icon>
+                </md-button>
+                <md-button
+                  class="md-icon-button"
+                  v-if="!item.isFav"
+                  @click="onFavourite_Favourite(item, item.userid)"
+                >
+                  <md-icon>favorite_border</md-icon>
+                </md-button>
+                <md-button class="md-icon-button" @click="showDeleteDialog_History(item.userid)">
+                  <md-icon>delete</md-icon>
+                </md-button>
+              </md-card-actions>
+            </md-card>
+            <div class="page-list-numbers">
+              <a
+                class="page-list-number-each"
+                v-for=" index in Array.from({ length: favouritePageMaximum }, (x, i) => i)"
+                v-bind:key="index"
+                @click="favouritePageNumber = index"
+              >{{index}}</a>
+            </div>
+          </div>
+          <md-snackbar :md-duration="4000" :md-active.sync="showFavouriteSnackbar">
+            <span>{{ favouriteSnackbarMessage }}</span>
+          </md-snackbar>
+        </div>
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -444,8 +629,8 @@ export default {
     onEditName: false,
     updateProfileSuccess: true,
     showSaveSnackbar: false,
+    // history
     historyList: null,
-    favouriteList: null,
     showDetailDialog: false,
     onRequest: false,
     showHistorySnackbar: false,
@@ -457,7 +642,17 @@ export default {
     historyPageMaximum: 0,
     searchText_History: "",
     searching_History: false,
-    cards_per_page: 9
+    cards_per_page: 9,
+    // favourite
+    favouriteList: null,
+    favouriteDisplayList: null,
+    showFavouriteSnackbar: false,
+    favouriteSnackbarMessage: "",
+    confirmDeleteUser_Favourite: false,
+    favouritePageNumber: 0,
+    favouritePageMaximum: 0,
+    searchText_Favourite: "",
+    searching_Favourite: false,
   }),
   created: async function() {
     await this.getProfileData();
@@ -473,6 +668,11 @@ export default {
       this.state = "history";
       this.fetchHistoryList();
     },
+    toFavourite(){
+      this.showNavigation = false;
+      this.state = "history";
+      this.fetchFavouriteList();
+    }
     logOut() {
       // this.$cookies.delete("_id");
       // this.$cookies.delete("token");
@@ -726,14 +926,21 @@ export default {
           console.log(response);
 
           let removeIndex = -1;
+          let removeDisplayIndex = -1;
           for (let item of this.historyList) {
             if (item.userid == this.onDeleteUserID) {
               removeIndex = this.historyList.indexOf(item);
             }
           }
-
+          for (let item of this.historyDisplayList) {
+            if (item.userid == this.onDeleteUserID) {
+              removeDisplayIndex = this.historyList.indexOf(item);
+            }
+          }
           if (removeIndex != -1) {
+
             this.historyList.splice(removeIndex, 1);
+            this.historyDisplayList.splice(removeDisplayIndex,1)
             this.showDetailDialog = false;
             this.historySnackbarMessage = "success delete this user";
             this.showHistorySnackbar = true;
@@ -782,7 +989,86 @@ export default {
       console.log(this.historyDisplayList);
 
       this.searching_History = false;
-    }
+    },
+    async fetchFavouriteList(){
+      let response = await this.$http.get(
+        this.$globalConfig.baseUrl + "/favorite/get",
+        {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token")
+          }
+        }
+      );
+      this.favouriteList = response.data.list;
+      this.favouriteDisplayList = response.data.list;
+      let maximumNumber = this.favouriteDisplayList.length / this.cards_per_page;
+      if (Math.floor(maximumNumber) < maximumNumber) {
+        this.favouritePageNumber = Math.floor(maximumNumber) + 1;
+      } else {
+        this.favouritePageNumber = Math.floor(maximumNumber);
+      }
+    },
+    async showUserDetail_Favourite(user) {
+      let id = user.userid;
+      this.showDetailDialog = true;
+      let response = await this.$http.post(
+        this.$globalConfig.baseUrl + "/profile/get?_id=" + id
+      );
+      setTimeout(() => {
+        this.dialogUser = response.data;
+        this.dialogUser.isFav = user.isFav;
+      }, 1000);
+      console.log(response.data);
+    },
+async onNotFavourite_Favourite(user, id) {
+      console.log("not favourite");
+      console.log(id);
+      try {
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/favorite/remove",
+          {
+            userid: id
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
+          }
+        );
+        console.log(response);
+        if (response.status == 200) {
+          let removeIndex = -1;
+          let removeDisplayIndex = -1;
+          for (let item of this.favouriteList) {
+            if (item.userid == this.onDeleteUserID) {
+              removeIndex = this.historyList.indexOf(item);
+            }
+          }
+          for (let item of this.favouriteDisplayList) {
+            if (item.userid == this.onDeleteUserID) {
+              removeDisplayIndex = this.favouriteDisplayList.indexOf(item);
+            }
+          }
+          if(removeIndex!= -1){
+            this.favouriteList.splice(removeIndex, 1);
+            if(removeDisplayIndex!=-1){
+              this.favouriteDisplayList.splice(removeDisplayIndex,1)
+            }
+            
+            this.showDetailDialog = false;
+            this.favouriteSnackbarMessage = "success remove from favourite";
+            this.showFavouriteSnackbar = true;
+          }
+          
+        } else {
+          this.historySnackbarMessage = "fail to remove from favourite";
+          this.showHistorySnackbar = true;
+        }
+      } catch (error) {
+        this.historySnackbarMessage = "fail to remove from favourite";
+        this.showHistorySnackbar = true;
+        console.error(error);
+      }
   }
 };
 </script>
