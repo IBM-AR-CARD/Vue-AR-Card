@@ -50,7 +50,7 @@
           </md-list-item>
         </md-list>
         <md-list class="nav-list log-out-button">
-          <md-list-item class="nav-list-item" v-on:click="logOut()">
+          <md-list-item class="nav-list-item" v-on:click="showLogoutMessage = true">
             <md-icon color="white" class="nav-list-icon">exit_to_app</md-icon>
             <span class="md-list-item-text nav-list-item-text">Log out</span>
           </md-list-item>
@@ -197,23 +197,6 @@
               <md-button @click="getProfileData()" class="md-raised card-action-cancel">Cancel</md-button>
             </md-card-actions>
           </md-card>
-          <md-snackbar
-            :md-duration="isInfinity ? Infinity : 4000"
-            :md-active.sync="showSnackbar"
-            md-persistent
-          >
-            <span>
-              {{
-              isInfinity
-              ? "You haven't login, Please login"
-              : "Connection timeout. please retry!"
-              }}
-            </span>
-            <md-button
-              class="retry-button"
-              @click="isInfinity ? toLogin() : onRetry()"
-            >{{ isInfinity ? "Login" : "Retry" }}</md-button>
-          </md-snackbar>
           <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
             <span>
               {{
@@ -537,8 +520,8 @@
             <md-dialog-confirm
               :md-active.sync="confirmDeleteUser_Favourite"
               md-title="'Do you whant to delete this user?'"
-              md-confirm-text="Agree"
-              md-cancel-text="Disagree"
+              md-confirm-text="Yes"
+              md-cancel-text="Cancel"
               @md-confirm="onConfirmDelete_Favourite"
             />
             <div class="search-field">
@@ -599,6 +582,35 @@
             <span>{{ favouriteSnackbarMessage }}</span>
           </md-snackbar>
         </div>
+        <md-snackbar
+          :md-duration="isInfinity ? Infinity : 4000"
+          :md-active.sync="showSnackbar"
+          md-persistent
+        >
+          <span>
+            {{
+            isInfinity
+            ? "You haven't login, Please login"
+            : "Connection timeout. please retry!"
+            }}
+          </span>
+          <md-button
+            class="retry-button"
+            @click="isInfinity ? toLogin() : onRetry()"
+          >{{ isInfinity ? "Login" : "Retry" }}</md-button>
+        </md-snackbar>
+        <md-dialog-confirm
+          :md-active.sync="showLogoutMessage"
+          md-title="'Do you whant to logout?'"
+          md-confirm-text="Yes"
+          md-cancel-text="Cancel"
+          @md-confirm="onConfirmLogout"
+        />
+        <md-dialog-alert
+          :md-active.sync="logoutUnsuccess"
+          md-content="Network error please try again"
+          md-confirm-text="OK"
+        />
       </md-app-content>
     </md-app>
     <!-- </div> -->
@@ -611,6 +623,7 @@ export default {
   name: "MyCards",
   data: () => ({
     _id: "",
+    currentPage: "MyCards",
     showNavigation: false,
     showSidepanel: false,
     profile: null,
@@ -633,6 +646,8 @@ export default {
     onEditName: false,
     updateProfileSuccess: true,
     showSaveSnackbar: false,
+    showLogoutMessage: false,
+    logoutUnsuccess: false,
     // history
     historyList: null,
     showDetailDialog: false,
@@ -714,6 +729,23 @@ export default {
       this.$cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
       this.toLogin();
     },
+    async onConfirmLogout() {
+      let response = await this.$http.post(
+        this.$globalConfig.baseUrl + "/user/logout",
+        {},
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + this.$cookies.get("token")
+          }
+        }
+      );
+      if (response.status == 200) {
+        this.logOut();
+      } else {
+        this.logoutUnsuccess = true;
+      }
+    },
     async getProfileData() {
       let _id = this.$cookies.get("_id");
       let token = this.$cookies.get("token");
@@ -752,7 +784,10 @@ export default {
       }
     },
     toLogin() {
-      this.$router.push("/");
+      if (this.currentPage != "Login") {
+        this.currentPage = "Login";
+        this.$router.push("/");
+      }
     },
     async onRetry() {
       await this.getProfileData();
@@ -818,14 +853,26 @@ export default {
       }
     },
     async fetchHistoryList() {
-      let response = await this.$http.get(
-        this.$globalConfig.baseUrl + "/history/get",
-        {
-          headers: {
-            Authorization: "Bearer " + this.$cookies.get("token")
+      let response;
+      try {
+        response = await this.$http.get(
+          this.$globalConfig.baseUrl + "/history/get",
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
+        );
+      } catch (err) {
+        if (err.response.status == 401) {
+          this.toLogin();
+
+          return;
+        } else {
+          this.fetchHistoryList();
+          return;
         }
-      );
+      }
       this.historyList = response.data.list;
       this.historyDisplayList = response.data.list;
       let maximumNumber = this.historyList.length / this.cards_per_page;
@@ -1024,14 +1071,25 @@ export default {
       this.searching_History = false;
     },
     async fetchFavouriteList() {
-      let response = await this.$http.get(
-        this.$globalConfig.baseUrl + "/favorite/get",
-        {
-          headers: {
-            Authorization: "Bearer " + this.$cookies.get("token")
+      let response;
+      try {
+        response = await this.$http.get(
+          this.$globalConfig.baseUrl + "/favorite/get",
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
+        );
+      } catch (err) {
+        if (err.response.status == 401) {
+          this.toLogin();
+          return;
+        } else {
+          this.fetchFavouriteList();
+          return;
         }
-      );
+      }
       console.log(response);
       this.favouriteList = response.data.list;
       this.favouriteDisplayList = response.data.list;
