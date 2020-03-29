@@ -60,7 +60,6 @@
           <span class="md-list-item-text nav-list-item-text">Log out</span>
         </md-button>-->
       </md-app-drawer>
-      <!-- <div class="card-container"> -->
       <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
         <component v-bind:is="currentComponent"></component>
         <md-snackbar
@@ -323,58 +322,15 @@ h3 {
   margin-right: 15%;
   color: #43425d;
 }
-.page-list-numbers {
-  margin-top: 2em;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-.page-list-number-each {
-  display: block;
-  background-color: #d9d9df;
-  margin: 0.5em;
-  padding: 0.6em;
-}
-.card-header {
-  font-size: 1.5em;
-  line-height: 1rem;
-  margin-bottom: 0.3em;
-  margin-top: 0;
-}
-.top-detail-container {
-  display: flex;
-}
 .nav-list-item-end {
   background-color: #43425d;
   // border: 1px solid red;
-}
-.name-edit-left {
-  width: 5em;
-}
-.name-icon-edit {
-  display: inline-block;
-}
-.select-label {
-  font-size: 1.3rem !important;
-  font-weight: bold;
 }
 .log-out-button {
   position: absolute;
   width: 100%;
   // left: calc(50% - 9em / 2);
   bottom: 3em;
-}
-.md-button-content {
-  display: flex !important;
-}
-.main-content-header {
-  font-size: 1.5rem;
-}
-.card-action-cancel {
-  margin-left: 3em !important;
-}
-.content-line {
-  display: flex;
 }
 .md-content {
   padding: 16px;
@@ -409,9 +365,6 @@ h3 {
 .nav-list-icon {
   color: white !important;
 }
-.search-field {
-  width: 100%;
-}
 .nav-list-icon svg {
   fill: white;
 }
@@ -419,28 +372,8 @@ h3 {
   color: white !important;
   font-weight: bold;
 }
-.card-container {
-  // box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1em;
-  // justify-content: ;
-  overflow: auto;
-}
 .md-content {
   background-color: white !important;
-}
-.card {
-  // box-sizing: border-box;
-  // height: 300px;
-  width: 29%;
-  margin-bottom: 2em;
-  margin: 0.5em 0;
-  max-width: 640px !important;
-  min-width: 300px;
-  // max-height: 230px !important;
 }
 .nav-left-menu-button {
   display: none;
@@ -465,28 +398,6 @@ h3 {
     opacity: 1;
   }
 }
-.on-select {
-  width: 100%;
-}
-.md-dialog-title {
-  display: flex;
-  justify-content: space-between;
-}
-.start-from-bottom {
-  // align-content: flex-end;
-  padding-top: 21px;
-}
-.content-field-label {
-  font-weight: bold;
-  font-size: 1.5rem !important;
-  margin-bottom: 1em !important;
-  color: #43425d;
-}
-.profile-image {
-  width: 96px;
-  height: 96px;
-  vertical-align: text-top;
-}
 .retry-button {
   color: white !important;
   font-weight: bold;
@@ -494,9 +405,6 @@ h3 {
 .md-app-content {
   width: 100%;
   height: auto !important;
-}
-.card-container-profile {
-  padding: 3em 10%;
 }
 .page-container {
   height: 100%;
@@ -510,22 +418,7 @@ h3 {
   max-width: calc(100vw - 125px);
   background-color: #292b42 !important;
 }
-.md-dialog-title-left {
-  margin-right: 2em;
-}
-.md-dialog-title-right {
-  margin-left: 2em;
-}
-.card-header-container {
-  // display: flex;
-  justify-content: space-between;
-}
 @media screen and (max-width: 945px) {
-  .card {
-    width: 100%;
-    // max-width: 600px;
-    margin-bottom: 1em;
-  }
   .md-drawer {
     width: 60px !important;
   }
@@ -538,15 +431,8 @@ h3 {
   .nav-title {
     display: none !important;
   }
-  .card-container-profile {
-    padding: 3em 2%;
-  }
 }
 @media screen and (max-width: 620px) {
-  .card {
-    margin: 01em 0 !important;
-    width: 100%;
-  }
   .nav-left-menu-button {
     display: block !important;
   }
@@ -559,31 +445,11 @@ h3 {
   .nav-title {
     display: block !important;
   }
-  .card-containe {
-    padding: 0 !important;
-  }
-  .card-container-profile {
-    padding: 3em 0%;
-  }
-  .top-detail-container {
-    flex-direction: column;
-  }
   .col-2 {
     width: 100%;
   }
   h3 {
     margin-right: 3em;
-  }
-  .start-from-bottom {
-    // align-content: flex-end;
-    padding-top: 0;
-  }
-  .md-dialog-title {
-    flex-direction: column;
-  }
-  .md-dialog-title-right {
-    margin-left: 0;
-    margin-top: 1em;
   }
 }
 </style>
