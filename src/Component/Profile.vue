@@ -142,7 +142,7 @@
 </template>
 <script>
 export default {
-  name: "MyCards",
+  name: "Profile",
   data: () => ({
     _id: "",
     currentPage: "MyCards",
@@ -175,16 +175,6 @@ export default {
     await this.getProfileData();
   },
   methods: {
-    toProfile() {
-      console.log("toProfile");
-      this.showNavigation = false;
-      this.state = "profile";
-      this.fetchFavouriteList();
-      this.fetchHistoryList();
-      this.searchText_Favourite = "";
-      this.searchText_History = "";
-      // this.historyList = null;
-    },
     logOut() {
       console.log(this.$cookies);
       this.$cookies.keys().forEach(cookie => this.$cookies.remove(cookie));
@@ -340,33 +330,8 @@ h3 {
   margin-right: 15%;
   color: #43425d;
 }
-.page-list-numbers {
-  margin-top: 2em;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-.page-list-number-each {
-  display: block;
-  background-color: #d9d9df;
-  margin: 0.5em;
-  padding: 0.6em;
-}
-.card-header {
-  font-size: 1.5em;
-  line-height: 1rem;
-  margin-bottom: 0.3em;
-  margin-top: 0;
-}
 .top-detail-container {
   display: flex;
-}
-.nav-list-item-end {
-  background-color: #43425d;
-  // border: 1px solid red;
-}
-.name-edit-left {
-  width: 5em;
 }
 .name-icon-edit {
   display: inline-block;
@@ -375,67 +340,13 @@ h3 {
   font-size: 1.3rem !important;
   font-weight: bold;
 }
-.log-out-button {
-  position: absolute;
-  width: 100%;
-  // left: calc(50% - 9em / 2);
-  bottom: 3em;
-}
-.md-button-content {
-  display: flex !important;
-}
-.main-content-header {
-  font-size: 1.5rem;
-}
 .card-action-cancel {
   margin-left: 3em !important;
 }
 .content-line {
   display: flex;
 }
-.md-content {
-  padding: 16px;
-}
-.toolbar-toprght-icon {
-  width: 50px;
-  height: 50px;
-  clip-path: circle(25px at center);
-}
-.toolbar-toprght-name {
-  font-size: 1.3rem;
-  text-transform: uppercase;
-  margin-right: 1em;
-}
 
-.nav-list-item {
-  background-color: #43425d;
-  margin-bottom: 0.5em;
-}
-
-.nav-list-item-onselect {
-  background-color: #504e6d;
-  margin-bottom: 0.5em;
-}
-.nav-list {
-  background-color: #292b42 !important;
-}
-.nav-list-item-text {
-  color: white;
-}
-
-.nav-list-icon {
-  color: white !important;
-}
-.search-field {
-  width: 100%;
-}
-.nav-list-icon svg {
-  fill: white;
-}
-.nav-title {
-  color: white !important;
-  font-weight: bold;
-}
 .card-container {
   // box-sizing: border-box;
   width: 100%;
@@ -446,9 +357,6 @@ h3 {
   // justify-content: ;
   overflow: auto;
 }
-.md-content {
-  background-color: white !important;
-}
 .card {
   // box-sizing: border-box;
   // height: 300px;
@@ -458,9 +366,6 @@ h3 {
   max-width: 640px !important;
   min-width: 300px;
   // max-height: 230px !important;
-}
-.nav-left-menu-button {
-  display: none;
 }
 .col-1 {
   width: 23%;
@@ -484,14 +389,6 @@ h3 {
 }
 .on-select {
   width: 100%;
-}
-.md-dialog-title {
-  display: flex;
-  justify-content: space-between;
-}
-.start-from-bottom {
-  // align-content: flex-end;
-  padding-top: 21px;
 }
 .content-field-label {
   font-weight: bold;
@@ -527,33 +424,11 @@ h3 {
   max-width: calc(100vw - 125px);
   background-color: #292b42 !important;
 }
-.md-dialog-title-left {
-  margin-right: 2em;
-}
-.md-dialog-title-right {
-  margin-left: 2em;
-}
-.card-header-container {
-  // display: flex;
-  justify-content: space-between;
-}
 @media screen and (max-width: 945px) {
   .card {
     width: 100%;
     // max-width: 600px;
     margin-bottom: 1em;
-  }
-  .md-drawer {
-    width: 60px !important;
-  }
-  .nav-left-menu-button {
-    display: none !important;
-  }
-  .nav-list-item-text {
-    display: none !important;
-  }
-  .nav-title {
-    display: none !important;
   }
   .card-container-profile {
     padding: 3em 2%;
@@ -564,19 +439,7 @@ h3 {
     margin: 01em 0 !important;
     width: 100%;
   }
-  .nav-left-menu-button {
-    display: block !important;
-  }
-  .md-drawer {
-    width: 220px !important;
-  }
-  .nav-list-item-text {
-    display: block !important;
-  }
-  .nav-title {
-    display: block !important;
-  }
-  .card-containe {
+  .card-container {
     padding: 0 !important;
   }
   .card-container-profile {
@@ -590,17 +453,6 @@ h3 {
   }
   h3 {
     margin-right: 3em;
-  }
-  .start-from-bottom {
-    // align-content: flex-end;
-    padding-top: 0;
-  }
-  .md-dialog-title {
-    flex-direction: column;
-  }
-  .md-dialog-title-right {
-    margin-left: 0;
-    margin-top: 1em;
   }
 }
 </style>
