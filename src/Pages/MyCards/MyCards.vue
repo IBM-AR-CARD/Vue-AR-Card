@@ -325,7 +325,10 @@
                   >
                     <md-icon>favorite</md-icon>
                   </md-button>
-                  <md-button class="md-icon-button" @click="showDeleteDialog(dialogUser._id)">
+                  <md-button
+                    class="md-icon-button"
+                    @click="showDeleteDialog_History(dialogUser._id)"
+                  >
                     <md-icon>delete</md-icon>
                   </md-button>
                   <md-button class="md-primary" @click="showDetailDialog = false">Close</md-button>
@@ -510,7 +513,10 @@
                   >
                     <md-icon>favorite</md-icon>
                   </md-button>
-                  <md-button class="md-icon-button" @click="showDeleteDialog(dialogUser._id)">
+                  <md-button
+                    class="md-icon-button"
+                    @click="showDeleteDialog_Favourite(dialogUser._id)"
+                  >
                     <md-icon>delete</md-icon>
                   </md-button>
                   <md-button class="md-primary" @click="showDetailDialog = false">Close</md-button>
