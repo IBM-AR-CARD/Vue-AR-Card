@@ -345,20 +345,14 @@ export default {
     },
     deleteFromHistory(userid) {
       let removeIndex = -1;
-      let removeDisplayIndex = -1;
       for (let item of this.historyList) {
         if (item.userid == userid) {
           removeIndex = this.historyList.indexOf(item);
         }
       }
-      for (let item of this.historyDisplayList) {
-        if (item.userid == userid) {
-          removeDisplayIndex = this.historyList.indexOf(item);
-        }
-      }
       if (removeIndex != -1) {
         this.historyList.splice(removeIndex, 1);
-        this.historyDisplayList.splice(removeDisplayIndex, 1);
+        this.searchOnChange_History();
         this.showDetailDialog = false;
         this.historySnackbarMessage = "success delete this user";
         this.showHistorySnackbar = true;
