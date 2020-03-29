@@ -62,156 +62,7 @@
       </md-app-drawer>
       <!-- <div class="card-container"> -->
       <md-app-content class="md-scrollbar" style="background-color: #F0F0F7 !important;">
-        <div v-if="state == 'profile'">
-          <md-card class="card-container-profile">
-            <md-card-header>
-              <div class="card-header-container" v-if="!onEditName">
-                <div class="md-title">
-                  <h1>
-                    {{ firstname | capitalize }} {{ lastname | capitalize }}
-                    <md-button
-                      class="md-icon-button name-icon-edit"
-                      @click="onEditName = !onEditName"
-                    >
-                      <md-icon>edit</md-icon>
-                    </md-button>
-                  </h1>
-
-                  <h2>@{{ username }}</h2>
-                </div>
-              </div>
-              <div class="card-header-container" v-if="onEditName">
-                <div class="md-title col-2">
-                  <!-- <md-field> -->
-                  <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100">
-                      <md-field>
-                        <label>First Name</label>
-                        <md-input v-model="firstname" />
-                      </md-field>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100">
-                      <md-field>
-                        <label>Last Name</label>
-                        <md-input v-model="lastname" />
-                      </md-field>
-                    </div>
-                    <md-button
-                      class="md-icon-button name-icon-edit"
-                      @click="onEditName = !onEditName"
-                    >
-                      <md-icon>done_all</md-icon>
-                    </md-button>
-                  </div>
-                  <!-- </md-field> -->
-                </div>
-              </div>
-            </md-card-header>
-            <div class="top-detail-container">
-              <div class="col-2">
-                <md-card-content class="content-line">
-                  <h3>Avatar:</h3>
-                  <input
-                    type="image"
-                    v-bind:src="profile"
-                    class="profile-image"
-                    @click="$refs.imageUpload.click()"
-                    v-if="profile"
-                  />
-                  <div v-if="!profile" @click="$refs.imageUpload.click()">
-                    <md-icon class="profile-image md-size-4x">person</md-icon>
-                  </div>
-                  <input
-                    type="file"
-                    ref="imageUpload"
-                    v-on:change="handleImageUpload()"
-                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                    style="display: none;"
-                  />
-                </md-card-content>
-                <md-card-content class="content-line">
-                  <md-field class="on-select">
-                    <label class="select-label">Gender</label>
-                    <md-select v-model="gender">
-                      <md-option value="0">Male</md-option>
-                      <md-option value="1">Female</md-option>
-                      <md-option value="2">Perfer not to say</md-option>
-                    </md-select>
-                  </md-field>
-                </md-card-content>
-                <md-card-content class="content-line">
-                  <md-field class="on-select">
-                    <label class="select-label">Model</label>
-                    <md-select v-model="model">
-                      <md-option
-                        v-for="item in $globalData.modalList"
-                        v-bind:key="item"
-                        v-bind:value="item"
-                      >{{ item }}</md-option>
-                    </md-select>
-                  </md-field>
-                </md-card-content>
-              </div>
-              <div class="col-2 start-from-bottom">
-                <md-card-content class="content-line">
-                  <md-field class="content-field">
-                    <label class="content-field-label">Website</label>
-                    <md-textarea v-model="website" md-autogrow></md-textarea>
-                  </md-field>
-                </md-card-content>
-                <md-card-content class="content-line">
-                  <md-field class="content-field">
-                    <label class="content-field-label">Phone</label>
-                    <md-textarea v-model="phone" md-autogrow></md-textarea>
-                  </md-field>
-                </md-card-content>
-                <md-card-content class="content-line">
-                  <md-field class="content-field">
-                    <label class="content-field-label">Email</label>
-                    <md-textarea v-model="email" md-autogrow></md-textarea>
-                  </md-field>
-                </md-card-content>
-              </div>
-            </div>
-            <md-card-content class="content-line">
-              <md-field class="content-field">
-                <label class="content-field-label">Description</label>
-                <md-textarea v-model="description" md-autogrow></md-textarea>
-              </md-field>
-            </md-card-content>
-            <md-card-content class="content-line">
-              <md-field class="content-field">
-                <label class="content-field-label">Education</label>
-                <md-textarea v-model="education" md-autogrow></md-textarea>
-              </md-field>
-            </md-card-content>
-            <md-card-content class="content-line">
-              <md-field class="content-field">
-                <label class="content-field-label">Experience</label>
-                <md-textarea v-model="experience" md-autogrow></md-textarea>
-              </md-field>
-            </md-card-content>
-            <md-card-actions>
-              <md-button @click="profileUpdate()" class="md-raised md-primary">Done</md-button>
-              <md-button @click="getProfileData()" class="md-raised card-action-cancel">Cancel</md-button>
-            </md-card-actions>
-          </md-card>
-          <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
-            <span>
-              {{
-              updateProfileSuccess
-              ? "You have successful update you profile"
-              : "Connection timeout. please retry!"
-              }}
-            </span>
-            <md-button
-              class="retry-button"
-              @click="profileUpdate()"
-              v-if="!updateProfileSuccess"
-            >Retry</md-button>
-          </md-snackbar>
-        </div>
+        <Profile v-if="state == 'profile'"></Profile>
         <div v-if="state == 'history'">
           <div v-if="!historyList" class="card-container">
             <md-card
@@ -625,8 +476,12 @@
 </template>
 
 <script>
+import Profile from "../../Component/Profile";
 export default {
   name: "MyCards",
+  components: {
+    Profile
+  },
   data: () => ({
     _id: "",
     currentPage: "MyCards",
