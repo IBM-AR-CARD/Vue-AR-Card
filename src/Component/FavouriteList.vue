@@ -121,7 +121,7 @@
       </md-dialog>
       <md-dialog-confirm
         :md-active.sync="confirmDeleteUser_Favourite"
-        md-title="'Do you whant to delete this user?'"
+        md-title="Do you whant to delete this user?"
         md-confirm-text="Yes"
         md-cancel-text="Cancel"
         @md-confirm="onConfirmDelete_Favourite"
@@ -220,7 +220,7 @@ export default {
         );
       } catch (err) {
         if (err.response.status == 401) {
-          this.toLogin();
+          this.$router.go(-1)
           return;
         } else {
           this.fetchFavouriteList();
