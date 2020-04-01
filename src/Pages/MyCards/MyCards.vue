@@ -228,7 +228,7 @@ export default {
     toLogin() {
       if (this.currentPage != "Login") {
         this.currentPage = "Login";
-        this.$router.pop();
+        this.$router.go(-1)
           return;
       }
     },
