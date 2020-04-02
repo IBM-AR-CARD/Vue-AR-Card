@@ -29,7 +29,7 @@
           >Forgot Password</md-button>-->
         </div>
         <div class="container-buttons">
-          <a v-on:click="onLogin()" class="buttons-login">Login</a>
+          <a v-on:click="onLogin()" class="buttons-login">Log in</a>
           <a v-on:click="toRegister()" class="buttons-signup">Sign up</a>
         </div>
       </div>
