@@ -132,8 +132,8 @@
       <span>
         {{
         updateProfileSuccess
-        ? "You have successful update you profile"
-        : "Connection timeout. please retry!"
+        ? "You have successfully updated you profile"
+        : "Connection timeout. please retry or try to login again."
         }}
       </span>
       <md-button class="retry-button" @click="profileUpdate()" v-if="!updateProfileSuccess">Retry</md-button>
@@ -227,7 +227,7 @@ export default {
         this.lastname = userData.lastname;
         this.description = userData.description;
         this.experience = userData.experience;
-        this.education = userData.experience;
+        this.education = userData.education;
         this.gender = userData.gender ?? 2;
       } catch (err) {
         this.isInfinity = false;

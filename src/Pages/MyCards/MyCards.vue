@@ -71,7 +71,7 @@
             {{
             isInfinity
             ? "You haven't login, Please login"
-            : "Connection timeout. please retry!"
+            : "Network Error. please retry or try to login again!"
             }}
           </span>
           <md-button
@@ -81,14 +81,14 @@
         </md-snackbar>
         <md-dialog-confirm
           :md-active.sync="showLogoutMessage"
-          md-title="'Do you whant to logout?'"
-          md-confirm-text="Yes"
+          md-title="Would you like to logout of the system?"
+          md-confirm-text="Logout"
           md-cancel-text="Cancel"
           @md-confirm="onConfirmLogout"
         />
         <md-dialog-alert
           :md-active.sync="logoutUnsuccess"
-          md-content="Network error please try again"
+          md-content="Network error, please try again."
           md-confirm-text="OK"
         />
       </md-app-content>
@@ -185,6 +185,7 @@ export default {
       if (response.status == 200) {
         this.logOut();
       } else {
+        this.logOut();
         this.logoutUnsuccess = true;
       }
     },
@@ -228,8 +229,8 @@ export default {
     toLogin() {
       if (this.currentPage != "Login") {
         this.currentPage = "Login";
-        this.$router.go(-1)
-          return;
+        this.$router.go(-1);
+        return;
       }
     },
     async onRetry() {

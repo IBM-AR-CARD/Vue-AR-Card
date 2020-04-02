@@ -222,7 +222,7 @@ export default {
         );
       } catch (err) {
         if (err.response.status == 401) {
-          this.$router.go(-1)
+          this.$router.go(-1);
           return;
         } else {
           this.fetchHistoryList();
@@ -267,7 +267,7 @@ export default {
         );
         console.log(response);
         if (response.status == 200) {
-          this.historySnackbarMessage = "success add to favourite";
+          this.historySnackbarMessage = "Added to favourite";
           this.showHistorySnackbar = true;
           if (this.dialogUser) {
             this.dialogUser.isFav = true;
@@ -284,11 +284,11 @@ export default {
             }
           });
         } else {
-          this.historySnackbarMessage = "fail to add to favourite";
+          this.historySnackbarMessage = "Fail to add to favourite";
           this.showHistorySnackbar = true;
         }
       } catch (error) {
-        this.historySnackbarMessage = "fail to add to favourite";
+        this.historySnackbarMessage = "Fail to add to favourite";
         this.showHistorySnackbar = true;
         console.error(error);
       }
@@ -309,7 +309,7 @@ export default {
           }
         );
         if (response.status == 200) {
-          this.historySnackbarMessage = "success remove from favourite";
+          this.historySnackbarMessage = "User removed from favourite";
           this.showHistorySnackbar = true;
           if (this.dialogUser) {
             this.dialogUser.isFav = false;
@@ -327,11 +327,11 @@ export default {
           });
           console.log(response);
         } else {
-          this.historySnackbarMessage = "fail to remove from favourite";
+          this.historySnackbarMessage = "Fail to remove from favourite";
           this.showHistorySnackbar = true;
         }
       } catch (error) {
-        this.historySnackbarMessage = "fail to remove from favourite";
+        this.historySnackbarMessage = "Fail to remove from favourite";
         this.showHistorySnackbar = true;
         console.error(error);
       }
@@ -353,10 +353,10 @@ export default {
         this.historyList.splice(removeIndex, 1);
         this.searchOnChange_History();
         this.showDetailDialog = false;
-        this.historySnackbarMessage = "success delete this user";
+        this.historySnackbarMessage = "The user is successfully deleted";
         this.showHistorySnackbar = true;
       } else {
-        this.historySnackbarMessage = "fail to delete this user";
+        this.historySnackbarMessage = "Fail to delete this user";
         this.showHistorySnackbar = true;
       }
     },
@@ -377,7 +377,7 @@ export default {
           console.log(response);
           this.deleteFromHistory(this.onDeleteUserID);
         } else {
-          this.historySnackbarMessage = "fail to delete this user";
+          this.historySnackbarMessage = "Fail to delete this user";
           this.showHistorySnackbar = true;
         }
         this.onDeleteUserID = null;
@@ -385,7 +385,7 @@ export default {
         this.onDeleteUserID = null;
         console.log(error);
 
-        this.historySnackbarMessage = "fail to delete this user";
+        this.historySnackbarMessage = "Fail to delete this user";
         this.showHistorySnackbar = true;
       }
     },

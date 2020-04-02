@@ -220,7 +220,7 @@ export default {
         );
       } catch (err) {
         if (err.response.status == 401) {
-          this.$router.go(-1)
+          this.$router.go(-1);
           return;
         } else {
           this.fetchFavouriteList();
@@ -261,12 +261,12 @@ export default {
         this.favouriteList.splice(removeIndex, 1);
         this.searchOnChange_Favourite();
         this.showDetailDialog = false;
-        this.favouriteSnackbarMessage = "success remove from favourite";
+        this.favouriteSnackbarMessage = "User removed from favourite";
         this.showFavouriteSnackbar = true;
       } else {
         console.log("removeIndex == -1");
 
-        this.favouriteSnackbarMessage = "fail to remove from favourite";
+        this.favouriteSnackbarMessage = "Fail to remove from favourite";
         this.showFavouriteSnackbar = true;
       }
     },
@@ -290,11 +290,11 @@ export default {
         } else {
           console.log("response != 200");
 
-          this.favouriteSnackbarMessage = "fail to remove from favourite";
+          this.favouriteSnackbarMessage = "Fail to remove from favourite";
           this.showFavouriteSnackbar = true;
         }
       } catch (error) {
-        this.favouriteSnackbarMessage = "fail to remove from favourite";
+        this.favouriteSnackbarMessage = "Fail to remove from favourite";
         this.showFavouriteSnackbar = true;
         console.error(error);
       }
@@ -316,7 +316,7 @@ export default {
           console.log(response);
           this.deleteFromFavourite(this.onDeleteUserID);
         } else {
-          this.favouriteSnackbarMessage = "fail to delete this user";
+          this.favouriteSnackbarMessage = "Fail to delete this user";
           this.showFavouriteSnackbar = true;
         }
         this.onDeleteUserID = null;
@@ -324,7 +324,7 @@ export default {
         this.onDeleteUserID = null;
         console.log(error);
 
-        this.favouriteSnackbarMessage = "fail to delete this user";
+        this.favouriteSnackbarMessage = "Fail to delete this user";
         this.showFavouriteSnackbar = true;
       }
     },
