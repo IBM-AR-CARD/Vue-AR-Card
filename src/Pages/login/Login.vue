@@ -37,7 +37,7 @@
         <div class="main-container">
           <div class="container-title">
             <h1 class="md-title md-headline">IBM AR Business Card</h1>
-            <h2>Please complete to create your account.</h2>
+            <h2>Register now to sync your scan history and favourites, also creating your own AR card!</h2>
             <p class="error-message">{{errorMsg}}</p>
           </div>
           <form class="container-inputfield">

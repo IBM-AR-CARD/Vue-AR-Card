@@ -5,6 +5,10 @@
         <div class="card-header-container" v-if="!onEditName">
           <div class="md-title">
             <h1>
+              <div
+                v-if="!firstname&&!lastname"
+                style="display:inline;font-size:35px;opacity:0.6;"
+              >Click the pencil icon to edit your name</div>
               {{ firstname | capitalize }} {{ lastname | capitalize }}
               <md-button class="md-icon-button name-icon-edit" @click="onEditName = !onEditName">
                 <md-icon>edit</md-icon>
@@ -42,7 +46,10 @@
       <div class="top-detail-container">
         <div class="col-2">
           <md-card-content class="content-line">
-            <h3>Avatar:</h3>
+            <div style="min-width:200px">
+              <h3>Profile Picture</h3>
+              <p style="opacity:0.7;">Tap the photo to upload</p>
+            </div>
             <input
               type="image"
               v-bind:src="profile"

@@ -122,8 +122,8 @@
       <md-dialog-confirm
         :md-active.sync="confirmDeleteUser_History"
         md-title="Do you whant to delete this user?"
-        md-confirm-text="Agree"
-        md-cancel-text="Disagree"
+        md-confirm-text="Delete"
+        md-cancel-text="Cancel"
         @md-confirm="onConfirmDelete_History"
       />
       <div class="search-field">
