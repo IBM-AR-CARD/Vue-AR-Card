@@ -9,7 +9,12 @@
 
         <div class="md-toolbar-section-end">
           <span class="toolbar-toprght-name">{{ firstname }} {{ lastname }}</span>
-          <img class="toolbar-toprght-icon" v-if="profile" v-bind:src="profile" />
+          <img
+            v-on:click="showLogoutMessage = true"
+            class="toolbar-toprght-icon"
+            v-if="profile"
+            v-bind:src="profile"
+          />
           <div>
             <md-icon class="toolbar-toprght-icon" v-if="!profile">person</md-icon>
           </div>
@@ -45,7 +50,7 @@
             v-on:click="toFavourite()"
             v-bind:class="{ 'nav-list-item-onselect': state == 'favourite' }"
           >
-            <md-icon color="white" class="nav-list-icon">star_outline</md-icon>
+            <md-icon color="white" class="nav-list-icon">favorite_outline</md-icon>
             <span class="md-list-item-text nav-list-item-text">Favourite</span>
           </md-list-item>
         </md-list>
@@ -69,15 +74,14 @@
         >
           <span>
             {{
-            isInfinity
-            ? "You haven't login, Please login"
-            : "Network Error. please retry or try to login again!"
+              isInfinity
+                ? "You haven't login, Please login"
+                : "Network Error. please retry or try to login again!"
             }}
           </span>
-          <md-button
-            class="retry-button"
-            @click="isInfinity ? toLogin() : onRetry()"
-          >{{ isInfinity ? "Login" : "Retry" }}</md-button>
+          <md-button class="retry-button" @click="isInfinity ? toLogin() : onRetry()">{{
+            isInfinity ? "Login" : "Retry"
+          }}</md-button>
         </md-snackbar>
         <md-dialog-confirm
           :md-active.sync="showLogoutMessage"
@@ -199,12 +203,9 @@ export default {
       }
       try {
         let profile = (
-          await this.$http.post(
-            this.$globalConfig.baseUrl + "/profile/get?_id=" + _id,
-            {
-              _id: _id
-            }
-          )
+          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get?_id=" + _id, {
+            _id: _id
+          })
         ).data;
         Object.assign(this.$globalData.userData, profile);
         let userData = this.$globalData.userData;
@@ -245,16 +246,12 @@ export default {
       let formData = new FormData();
       formData.append("file", this.image);
       try {
-        let response = await this.$http.post(
-          this.$globalConfig.baseUrl + "/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: "Bearer " + this.$cookies.get("token")
-            }
+        let response = await this.$http.post(this.$globalConfig.baseUrl + "/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + this.$cookies.get("token")
           }
-        );
+        });
         this.profile = response.data.path;
       } catch (err) {
         this.isInfinity = false;
@@ -280,15 +277,11 @@ export default {
           model: this.model
         };
         console.log(parseObject);
-        await this.$http.post(
-          this.$globalConfig.baseUrl + "/profile/update",
-          parseObject,
-          {
-            headers: {
-              Authorization: "Bearer " + this.$cookies.get("token")
-            }
+        await this.$http.post(this.$globalConfig.baseUrl + "/profile/update", parseObject, {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token")
           }
-        );
+        });
         this.updateProfileSuccess = true;
         this.showSaveSnackbar = true;
       } catch (error) {
@@ -344,7 +337,7 @@ h3 {
 }
 .toolbar-toprght-name {
   font-size: 1.3rem;
-  text-transform: uppercase;
+  // text-transform: uppercase;
   margin-right: 1em;
 }
 
