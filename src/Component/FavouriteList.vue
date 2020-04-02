@@ -31,10 +31,10 @@
         :md-active.sync="showDetailDialog"
         :md-fullscreen="false"
         @md-closed="
-                () => {
-                  this.dialogUser = null;
-                }
-              "
+          () => {
+            this.dialogUser = null;
+          }
+        "
       >
         <md-dialog-content class="md-scrollbar">
           <md-dialog-title v-if="dialogUser">
@@ -67,9 +67,7 @@
           <md-content v-if="dialogUser && dialogUser.website">
             <span class="md-body-2">Website:</span>
             <a v-bind:href="dialogUser.website">
-              {{
-              dialogUser.website
-              }}
+              {{ dialogUser.website }}
             </a>
           </md-content>
           <md-content v-if="dialogUser && dialogUser.phone">
@@ -129,13 +127,31 @@
       <div class="search-field">
         <md-field>
           <label>Search</label>
-          <md-input v-model.trim="searchText_Favourite" @input="searchOnChange_Favourite()"></md-input>
+          <md-input
+            v-model.trim="searchText_Favourite"
+            @input="searchOnChange_Favourite()"
+          ></md-input>
           <md-icon>search</md-icon>
         </md-field>
       </div>
+
+      <md-empty-state
+        md-icon="favorite_border"
+        md-label="No favorites yet"
+        md-description="Add a card to your favourites when viewing that card or in the history list, sync it everywhere."
+        v-if="favouriteDisplayList.length == 0"
+        style="margin-top:30px"
+      >
+      </md-empty-state>
+
       <md-card
         class="card"
-        v-for="item in (favouriteDisplayList.slice(favouritePageNumber*cards_per_page,(favouritePageNumber*cards_per_page+cards_per_page)>=favouriteList.length?favouriteList.length:favouritePageNumber*cards_per_page+cards_per_page))"
+        v-for="item in favouriteDisplayList.slice(
+          favouritePageNumber * cards_per_page,
+          favouritePageNumber * cards_per_page + cards_per_page >= favouriteList.length
+            ? favouriteList.length
+            : favouritePageNumber * cards_per_page + cards_per_page
+        )"
         v-bind:key="item._id"
         md-with-hover
       >
@@ -174,10 +190,11 @@
       <div class="page-list-numbers">
         <a
           class="page-list-number-each"
-          v-for=" index in Array.from({ length: favouritePageMaximum }, (x, i) => i)"
+          v-for="index in Array.from({ length: favouritePageMaximum }, (x, i) => i)"
           v-bind:key="index"
           @click="favouritePageNumber = index"
-        >{{index}}</a>
+          >{{ index }}</a
+        >
       </div>
     </div>
     <md-snackbar :md-duration="1000" :md-active.sync="showFavouriteSnackbar">
@@ -210,14 +227,11 @@ export default {
     async fetchFavouriteList() {
       let response;
       try {
-        response = await this.$http.get(
-          this.$globalConfig.baseUrl + "/favorite/get",
-          {
-            headers: {
-              Authorization: "Bearer " + this.$cookies.get("token")
-            }
+        response = await this.$http.get(this.$globalConfig.baseUrl + "/favorite/get", {
+          headers: {
+            Authorization: "Bearer " + this.$cookies.get("token")
           }
-        );
+        });
       } catch (err) {
         if (err.response.status == 401) {
           this.$router.go(-1);
@@ -240,9 +254,7 @@ export default {
     async showUserDetail_Favourite(user) {
       let id = user.userid;
       this.showDetailDialog = true;
-      let response = await this.$http.post(
-        this.$globalConfig.baseUrl + "/profile/get?_id=" + id
-      );
+      let response = await this.$http.post(this.$globalConfig.baseUrl + "/profile/get?_id=" + id);
       setTimeout(() => {
         this.dialogUser = response.data;
         this.dialogUser.isFav = user.isFav;
