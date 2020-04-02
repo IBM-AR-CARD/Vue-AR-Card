@@ -1,6 +1,8 @@
 <template>
   <div id="screen-main">
-    <div class="left"></div>
+    <div class="left">
+      <img class="left-logo" src="../../assets/logo.png" />
+    </div>
     <div class="right">
       <div v-if="state == 'login'" class="container">
         <div class="container-title">
@@ -201,6 +203,20 @@ a {
 }
 </style>
 <style scoped>
+.left-logo {
+  margin-top: 15%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 200px;
+  width: 30%;
+  display: none;
+}
+.left {
+  background-image: url("../../assets/loginbackground.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 #screen-main {
   display: flex;
   width: 100%;
@@ -369,6 +385,7 @@ div {
 @media screen and (max-width: 720px) {
   .left {
     width: 0;
+    display: none;
   }
   .right {
     width: 100%;
