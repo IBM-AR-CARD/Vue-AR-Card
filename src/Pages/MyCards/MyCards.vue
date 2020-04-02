@@ -54,7 +54,16 @@
             <span class="md-list-item-text nav-list-item-text">Favourite</span>
           </md-list-item>
         </md-list>
+
         <md-list class="nav-list log-out-button">
+          <md-list-item
+            class="nav-list-item"
+            onclick="window.location = 'http://ar-card.henryz.cc/'"
+            style="user-select:none; cursor:pointer;"
+          >
+            <md-icon color="white" class="nav-list-icon">system_update</md-icon>
+            <span class="md-list-item-text nav-list-item-text">Get the App</span>
+          </md-list-item>
           <md-list-item class="nav-list-item" v-on:click="showLogoutMessage = true">
             <md-icon color="white" class="nav-list-icon">exit_to_app</md-icon>
             <span class="md-list-item-text nav-list-item-text">Log out</span>

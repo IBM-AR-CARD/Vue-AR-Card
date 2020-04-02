@@ -13,7 +13,7 @@ Vue.use(VueRouter);
 Vue.use(VueMaterial);
 Vue.use(VueCookies);
 const globalConfig = {
-  baseUrl: "http://henryz.co:8080"
+  baseUrl: "http://ar-card.henryz.cc:8080"
 };
 
 globalConfig.install = function() {
