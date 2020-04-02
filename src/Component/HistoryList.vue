@@ -121,7 +121,7 @@
       </md-dialog>
       <md-dialog-confirm
         :md-active.sync="confirmDeleteUser_History"
-        md-title="'Do you whant to delete this user?'"
+        md-title="Do you whant to delete this user?"
         md-confirm-text="Agree"
         md-cancel-text="Disagree"
         @md-confirm="onConfirmDelete_History"
@@ -222,8 +222,7 @@ export default {
         );
       } catch (err) {
         if (err.response.status == 401) {
-          this.toLogin();
-
+          this.$router.go(-1)
           return;
         } else {
           this.fetchHistoryList();
