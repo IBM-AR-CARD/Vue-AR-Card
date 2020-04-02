@@ -489,6 +489,10 @@ h3 {
 .md-content {
   background-color: white !important;
 }
+.md-dialog-title {
+  display: flex;
+  justify-content: space-between;
+}
 .card {
   // box-sizing: border-box;
   // height: 300px;
@@ -528,11 +532,11 @@ h3 {
   height: 96px;
   vertical-align: text-top;
 }
-.md-dialog-title-left {
-  margin-right: 2em;
-}
+// .md-dialog-title-left {
+//   margin-right: 2em;
+// }
 .md-dialog-title-right {
-  margin-left: 2em;
+  // margin-left: 2em;
 }
 @media screen and (max-width: 945px) {
   .card {

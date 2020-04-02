@@ -20,11 +20,11 @@
         </form>
         <div class="loginstate">
           <md-checkbox v-model="remember">Remember me</md-checkbox>
-          <md-button
+          <!-- <md-button
             v-on:click="toForgot()"
             class="loginstate-forgot"
             :md-ripple="false"
-          >Forgot Password</md-button>
+          >Forgot Password</md-button>-->
         </div>
         <div class="container-buttons">
           <a v-on:click="onLogin()" class="buttons-login">Login</a>
@@ -56,7 +56,7 @@
               <md-input type="password" v-model="registerPasswordConfirm"></md-input>
             </md-field>
           </form>
-          <md-checkbox v-model="agree">I agree with terms and conditions</md-checkbox>
+          <!-- <md-checkbox v-model="agree">I agree with terms and conditions</md-checkbox> -->
           <a class="container-buttons-skip" v-on:click="onRegister()">Sign up</a>
           <a v-on:click="toLogin()" class="buttons-Already">Already have an account? Sign in.</a>
         </div>
@@ -182,7 +182,7 @@ export default {
       registerPassword: "",
       registerUserName: "",
       remember: false,
-      agree: false
+      agree: true
     };
   },
   created: async function() {
@@ -256,7 +256,7 @@ div {
   max-width: 400px;
   margin: 0 auto;
   padding: 1em;
-  padding-bottom: 20em;
+  /* padding-bottom: 20em; */
   vertical-align: middle;
 }
 

@@ -476,12 +476,16 @@ h3 {
   height: 100%;
   overflow: hidden;
 }
-.md-dialog-title-left {
-  margin-right: 2em;
+// .md-dialog-title-left {
+//   margin-right: 2em;
+// }
+.md-dialog-title {
+  display: flex;
+  justify-content: space-between;
 }
-.md-dialog-title-right {
-  margin-left: 2em;
-}
+// .md-dialog-title-right {
+//   margin-left: 2em;
+// }
 .card-header-container {
   // display: flex;
   justify-content: space-between;
