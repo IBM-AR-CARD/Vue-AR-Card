@@ -22,7 +22,7 @@
 
           <!-- <md-button class="md-icon-button">
             <md-icon>delete</md-icon>
-          </md-button> -->
+          </md-button>-->
         </md-card-actions>
       </md-card>
     </div>
@@ -66,9 +66,7 @@
           </md-content>
           <md-content v-if="dialogUser && dialogUser.website">
             <span class="md-body-2">Website:</span>
-            <a v-bind:href="dialogUser.website">
-              {{ dialogUser.website }}
-            </a>
+            <a v-bind:href="dialogUser.website">{{ dialogUser.website }}</a>
           </md-content>
           <md-content v-if="dialogUser && dialogUser.phone">
             <span class="md-body-2">Phone:</span>
@@ -112,7 +110,7 @@
             </md-button>
             <!-- <md-button class="md-icon-button" @click="showDeleteDialog_Favourite(dialogUser._id)">
               <md-icon>delete</md-icon>
-            </md-button> -->
+            </md-button>-->
             <md-button class="md-primary" @click="showDetailDialog = false">Close</md-button>
           </md-dialog-actions>
         </md-dialog-content>
@@ -127,10 +125,7 @@
       <div class="search-field">
         <md-field>
           <label>Search</label>
-          <md-input
-            v-model.trim="searchText_Favourite"
-            @input="searchOnChange_Favourite()"
-          ></md-input>
+          <md-input v-model.trim="searchText_Favourite" @input="searchOnChange_Favourite()"></md-input>
           <md-icon>search</md-icon>
         </md-field>
       </div>
@@ -141,8 +136,7 @@
         md-description="Add a card to your favourites when viewing that card or in the history list, sync it everywhere."
         v-if="favouriteDisplayList.length == 0"
         style="margin-top:30px"
-      >
-      </md-empty-state>
+      ></md-empty-state>
 
       <md-card
         class="card"
@@ -184,7 +178,7 @@
           </md-button>
           <!-- <md-button class="md-icon-button" @click="showDeleteDialog_Favourite(item.userid)">
             <md-icon>delete</md-icon>
-          </md-button> -->
+          </md-button>-->
         </md-card-actions>
       </md-card>
       <div class="page-list-numbers">
@@ -193,8 +187,7 @@
           v-for="index in Array.from({ length: favouritePageMaximum }, (x, i) => i)"
           v-bind:key="index"
           @click="favouritePageNumber = index"
-          >{{ index }}</a
-        >
+        >{{ index }}</a>
       </div>
     </div>
     <md-snackbar :md-duration="1000" :md-active.sync="showFavouriteSnackbar">
@@ -227,11 +220,14 @@ export default {
     async fetchFavouriteList() {
       let response;
       try {
-        response = await this.$http.get(this.$globalConfig.baseUrl + "/favorite/get", {
-          headers: {
-            Authorization: "Bearer " + this.$cookies.get("token")
+        response = await this.$http.get(
+          this.$globalConfig.baseUrl + "/favorite/get",
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
-        });
+        );
       } catch (err) {
         if (err.response.status == 401) {
           this.$router.go(-1);
@@ -254,7 +250,9 @@ export default {
     async showUserDetail_Favourite(user) {
       let id = user.userid;
       this.showDetailDialog = true;
-      let response = await this.$http.post(this.$globalConfig.baseUrl + "/profile/get?_id=" + id);
+      let response = await this.$http.post(
+        this.$globalConfig.baseUrl + "/profile/get?_id=" + id
+      );
       setTimeout(() => {
         this.dialogUser = response.data;
         this.dialogUser.isFav = user.isFav;
@@ -446,7 +444,7 @@ h3 {
   margin-bottom: 2em;
   margin: 0.5em 0;
   max-width: 640px !important;
-  min-width: 300px;
+  min-width: 350px;
   // max-height: 230px !important;
 }
 .col-1 {
@@ -514,7 +512,7 @@ h3 {
 }
 @media screen and (max-width: 620px) {
   .card {
-    margin: 01em 0 !important;
+    margin: 1em 1em !important;
     width: 100%;
   }
   .card-containe {
