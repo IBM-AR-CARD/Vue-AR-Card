@@ -506,7 +506,7 @@ h3 {
   // height: 300px;
   width: 29%;
   margin-bottom: 2em;
-  margin: 0.5em 0;
+  margin: 0.5em;
   max-width: 640px !important;
   min-width: 350px;
   // max-height: 230px !important;
