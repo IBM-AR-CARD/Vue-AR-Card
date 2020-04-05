@@ -8,9 +8,7 @@
               <div
                 v-if="!firstname && !lastname"
                 style="display:inline;font-size:35px;opacity:0.6;"
-              >
-                Click the pencil icon to edit your name
-              </div>
+              >Click the pencil icon to edit your name</div>
               {{ firstname | capitalize }} {{ lastname | capitalize }}
               <md-button class="md-icon-button name-icon-edit" @click="onEditName = !onEditName">
                 <md-icon>edit</md-icon>
@@ -74,9 +72,9 @@
             <md-field class="on-select">
               <label class="select-label">Gender</label>
               <md-select v-model="gender">
-                <md-option value="0">Male</md-option>
-                <md-option value="1">Female</md-option>
-                <md-option value="2">Perfer not to say</md-option>
+                <md-option value="0">Perfer not to say</md-option>
+                <md-option value="1">Male</md-option>
+                <md-option value="2">Female</md-option>
               </md-select>
             </md-field>
           </md-card-content>
@@ -88,8 +86,7 @@
                   v-for="item in $globalData.modalList"
                   v-bind:key="item"
                   v-bind:value="item"
-                  >{{ item }}</md-option
-                >
+                >{{ item }}</md-option>
               </md-select>
             </md-field>
           </md-card-content>
@@ -135,22 +132,18 @@
       </md-card-content>
       <md-card-actions>
         <md-button @click="getProfileData()" class="md-raised">Discard</md-button>
-        <md-button @click="profileUpdate()" class="md-raised md-primary card-action-margin"
-          >Save</md-button
-        >
+        <md-button @click="profileUpdate()" class="md-raised md-primary card-action-margin">Save</md-button>
       </md-card-actions>
     </md-card>
     <md-snackbar :md-duration="4000" :md-active.sync="showSaveSnackbar">
       <span>
         {{
-          updateProfileSuccess
-            ? "Your profile has been successfully updated"
-            : "Connection timeout. please retry or try to login again."
+        updateProfileSuccess
+        ? "Your profile has been successfully updated"
+        : "Connection timeout. please retry or try to login again."
         }}
       </span>
-      <md-button class="retry-button" @click="profileUpdate()" v-if="!updateProfileSuccess"
-        >Retry</md-button
-      >
+      <md-button class="retry-button" @click="profileUpdate()" v-if="!updateProfileSuccess">Retry</md-button>
     </md-snackbar>
   </div>
 </template>
@@ -221,9 +214,12 @@ export default {
       }
       try {
         let profile = (
-          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get?_id=" + _id, {
-            _id: _id
-          })
+          await this.$http.post(
+            this.$globalConfig.baseUrl + "/profile/get?_id=" + _id,
+            {
+              _id: _id
+            }
+          )
         ).data;
         Object.assign(this.$globalData.userData, profile);
         let userData = this.$globalData.userData;
@@ -263,12 +259,16 @@ export default {
       let formData = new FormData();
       formData.append("file", this.image);
       try {
-        let response = await this.$http.post(this.$globalConfig.baseUrl + "/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + this.$cookies.get("token")
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
-        });
+        );
         this.profile = response.data.path;
       } catch (err) {
         this.isInfinity = false;
@@ -294,11 +294,15 @@ export default {
           model: this.model
         };
         console.log(parseObject);
-        await this.$http.post(this.$globalConfig.baseUrl + "/profile/update", parseObject, {
-          headers: {
-            Authorization: "Bearer " + this.$cookies.get("token")
+        await this.$http.post(
+          this.$globalConfig.baseUrl + "/profile/update",
+          parseObject,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
-        });
+        );
         this.updateProfileSuccess = true;
         this.showSaveSnackbar = true;
       } catch (error) {

@@ -52,9 +52,9 @@
           <md-divider></md-divider>
           <md-content v-if="dialogUser">
             <label class="md-body-2">Gender:</label>
-            <span v-if="dialogUser.gender == 0">Male</span>
-            <span v-if="dialogUser.gender == 1">Female</span>
-            <span v-if="dialogUser.gender == 2">Perfer not to say</span>
+            <span v-if="dialogUser.gender == 1">Male</span>
+            <span v-if="dialogUser.gender == 2">Female</span>
+            <span v-if="dialogUser.gender == 0">Perfer not to say</span>
           </md-content>
           <md-content v-if="dialogUser">
             <label class="md-body-2">Model:</label>
