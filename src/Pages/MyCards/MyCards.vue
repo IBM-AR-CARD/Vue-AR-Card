@@ -58,7 +58,7 @@
         <md-list class="nav-list log-out-button">
           <md-list-item
             class="nav-list-item"
-            onclick="window.location = 'http://ar-card.henryz.cc/'"
+            onclick="window.location = 'https://ibm-ar-card.github.io/Report-Website-Vue/'"
             style="user-select:none; cursor:pointer;"
           >
             <md-icon color="white" class="nav-list-icon">system_update</md-icon>
@@ -83,14 +83,16 @@
         >
           <span>
             {{
-              isInfinity
-                ? "You haven't login, Please login"
-                : "Network Error. please retry or try to login again!"
+            isInfinity
+            ? "You haven't login, Please login"
+            : "Network Error. please retry or try to login again!"
             }}
           </span>
-          <md-button class="retry-button" @click="isInfinity ? toLogin() : onRetry()">{{
+          <md-button class="retry-button" @click="isInfinity ? toLogin() : onRetry()">
+            {{
             isInfinity ? "Login" : "Retry"
-          }}</md-button>
+            }}
+          </md-button>
         </md-snackbar>
         <md-dialog-confirm
           :md-active.sync="showLogoutMessage"
@@ -212,9 +214,12 @@ export default {
       }
       try {
         let profile = (
-          await this.$http.post(this.$globalConfig.baseUrl + "/profile/get?_id=" + _id, {
-            _id: _id
-          })
+          await this.$http.post(
+            this.$globalConfig.baseUrl + "/profile/get?_id=" + _id,
+            {
+              _id: _id
+            }
+          )
         ).data;
         Object.assign(this.$globalData.userData, profile);
         let userData = this.$globalData.userData;
@@ -255,12 +260,16 @@ export default {
       let formData = new FormData();
       formData.append("file", this.image);
       try {
-        let response = await this.$http.post(this.$globalConfig.baseUrl + "/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + this.$cookies.get("token")
+        let response = await this.$http.post(
+          this.$globalConfig.baseUrl + "/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
-        });
+        );
         this.profile = response.data.path;
       } catch (err) {
         this.isInfinity = false;
@@ -286,11 +295,15 @@ export default {
           model: this.model
         };
         console.log(parseObject);
-        await this.$http.post(this.$globalConfig.baseUrl + "/profile/update", parseObject, {
-          headers: {
-            Authorization: "Bearer " + this.$cookies.get("token")
+        await this.$http.post(
+          this.$globalConfig.baseUrl + "/profile/update",
+          parseObject,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$cookies.get("token")
+            }
           }
-        });
+        );
         this.updateProfileSuccess = true;
         this.showSaveSnackbar = true;
       } catch (error) {

@@ -13,14 +13,14 @@ Vue.use(VueRouter);
 Vue.use(VueMaterial);
 Vue.use(VueCookies);
 const globalConfig = {
-  baseUrl: "http://ar-card.henryz.cc:8080"
+  baseUrl: "https://ibm-ar-card.herokuapp.com",
 };
 
 globalConfig.install = function() {
   Object.defineProperty(Vue.prototype, "$globalConfig", {
     get() {
       return globalConfig;
-    }
+    },
   });
 };
 
@@ -40,15 +40,15 @@ const globalData = {
     "BusinessFemale",
     "SmartMale",
     "UnityChan",
-    "SmartFemale"
-  ]
+    "SmartFemale",
+  ],
 };
 
 globalData.install = function() {
   Object.defineProperty(Vue.prototype, "$globalData", {
     get() {
       return globalData;
-    }
+    },
   });
 };
 
@@ -61,6 +61,6 @@ Vue.filter("capitalize", function(value) {
 });
 
 new Vue({
-  render: h => h(App),
-  router: router
+  render: (h) => h(App),
+  router: router,
 }).$mount("#app");
